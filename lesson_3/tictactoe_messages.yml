@@ -1,0 +1,63 @@
+directory: |
+  What would you like to do?
+  1) New Game
+  2) View Instructions
+  3) Exit Program
+   
+instructions: |
+  *** INSTRUCTIONS ***
+
+  The familiar game you love, now brought to you as a computer program! Each player takes turns placing their tile in one of the 9 squares. First player to get 3 in a row wins!
+  
+  GAMEPLAY:
+  When placing a tile, input an integer between 1-9, then [ENTER]. Below shows which square corresponds to each integer.
+
+       |     |
+    1  |  2  |  3
+       |     |
+  -----+-----+-----
+       |     |
+    4  |  5  |  6
+       |     |
+  -----+-----+-----
+       |     |
+    7  |  8  |  9
+       |     |
+
+  Each player takes turns placing a tile in an empty square until a winner is determined or the board is filled.
+
+  HOW TO WIN:
+  A winning game can be achieved with 3 consecutive tiles either horizontally, vertically, or diagonally.
+
+      Horizontal           Vertical             Diagonal
+
+       |     |              |     |              |     |      
+    X  |  X  |  X        X  |     |           X  |     |
+       |     |              |     |              |     |      
+  -----+-----+-----    -----+-----+-----    -----+-----+-----
+       |     |              |     |              |     |      
+       |     |      OR   X  |     |       OR     |  X  |      
+       |     |              |     |              |     |      
+  -----+-----+-----    -----+-----+-----    -----+-----+-----
+       |     |              |     |              |     |      
+       |     |           X  |     |              |     |   X   
+       |     |              |     |              |     |      
+
+  If all squares are filled and no winner is present, the game is considered a 'tie' and the round will repeat.
+   
+valid_square: Sorry, that's not a valid choice.
+tie: "It's a tie!"
+again?: Play again? (y/n)
+welcome: |
+  Welcome to TIC-TAC-TOE
+   
+thinking: Computer is thinking...
+goodbye: |
+  Thank you for playing TIC-TAC-TOE! Goodbye.
+   
+continue?: Press [ENTER] to continue.
+yes_or_no: Invalid choice. Must input 'y' or 'n'.
+rounds?: "Choose the total number of rounds:"
+valid_integer: Must be a whole number.
+odd_integer: Must be an odd integer greater than zero.
+valid_choice: Invalid choice. Must input '1', '2', or '3'.
