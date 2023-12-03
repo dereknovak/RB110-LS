@@ -5,7 +5,7 @@ directory: |
   3) Exit Program
    
 instructions: |
-  *** INSTRUCTIONS ***
+  ====== INSTRUCTIONS ======
 
   The familiar game you love, now brought to you as a computer program! Each player takes turns placing their tile in one of the 9 squares. First player to get 3 in a row wins!
   
@@ -49,7 +49,7 @@ valid_square: Sorry, that's not a valid choice.
 tie: "It's a tie!"
 again?: Play again? (y/n)
 welcome: |
-  Welcome to TIC-TAC-TOE
+  ====== Welcome to Tic-Tac-Toe ======
    
 thinking: Computer is thinking...
 goodbye: |
@@ -61,3 +61,7 @@ rounds?: "Choose the total number of rounds:"
 valid_integer: Must be a whole number.
 odd_integer: Must be an odd integer greater than zero.
 valid_choice: Invalid choice. Must input '1', '2', or '3'.
+too_many: |
+  Wow, you're quite an ambitious fellow!
+  => Let's keep it below 10 rounds for today. :)
+   

@@ -1,11 +1,10 @@
 require 'pry'
 require 'yaml'
 
-MESSAGES = YAML.load_file('tictactoe_messages.yml')
-
 WINNING_LINES = [[1, 2, 3], [4, 5, 6], [7, 8, 9]] + # rows
                 [[1, 4, 7], [2, 5, 8], [3, 6, 9]] + # columns
                 [[1, 5, 9], [3, 5, 7]]              # diagonals
+MESSAGES = YAML.load_file('tictactoe_messages.yml')
 INITIAL_MARKER = ' '
 PLAYER_MARKER = 'X'
 COMPUTER_MARKER = 'O'
@@ -34,9 +33,9 @@ end
 # Display Methods
 
 def display_round_info(total_rounds, round, player_wins, computer_wins)
-  puts "        BEST OF #{total_rounds}"
+  puts " ====== BEST OF #{total_rounds} ======"
   puts "         ROUND #{round}"
-  puts "  Player #{player_wins} | Computer #{computer_wins}"
+  puts " Player: #{player_wins} | Computer: #{computer_wins}"
   puts ''
 end
 
@@ -76,6 +75,7 @@ end
 
 def get_choice
   valid_choices = %w(1 2 3)
+
   loop do
     choice = gets.chomp
     return choice if valid_choices.include?(choice)
@@ -85,10 +85,13 @@ end
 
 def get_total_rounds
   prompt_message("rounds?")
+
   loop do
     rounds = gets.chomp.to_f
     if rounds % 1 != 0
       prompt_message('valid_integer')
+    elsif rounds > 9
+      prompt_message('too_many')
     elsif rounds.to_i.odd? && rounds > 0
       return rounds.to_i
     else
@@ -199,7 +202,7 @@ def play_game
     display_board(board, total_rounds, round, player_wins, computer_wins)
 
     if someone_won?(board)
-      prompt "#{detect_winner(board)} won!"
+      puts "     #{detect_winner(board)} wins!\n\n"
       case detect_winner(board)
       when 'Player'   then player_wins += 1
       when 'Computer' then computer_wins += 1
