@@ -53,7 +53,7 @@ welcome: |
    
 thinking: Computer is thinking...
 goodbye: |
-  Thank you for playing TIC-TAC-TOE! Goodbye.
+  Thank you for playing Tic-Tac-Toe! Goodbye.
    
 continue?: Press [ENTER] to continue.
 yes_or_no: Invalid choice. Must input 'y' or 'n'.

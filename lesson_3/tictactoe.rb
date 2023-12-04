@@ -138,8 +138,30 @@ def player_places_piece!(brd)
 end
 
 def computer_places_piece!(brd)
-  square = empty_squares(brd).sample
+  square = nil
+  
+  # Checks offensive move
+  WINNING_LINES.each do |line|
+    square = find_winning_square(line, brd, COMPUTER_MARKER)
+    break if square
+  end
+
+  # Checks defensive move
+  WINNING_LINES.each do |line|
+    square ||= find_winning_square(line, brd, PLAYER_MARKER)
+    break if square
+  end
+
+  square ||= empty_squares(brd).sample
   brd[square] = COMPUTER_MARKER
+end
+
+def find_winning_square(line, board, marker)
+  if board.values_at(*line).count(marker) == 2
+    board.select { |k, v| line.include?(k) && v == INITIAL_MARKER }.keys.first
+  else
+    nil
+  end
 end
 
 def board_full?(brd)
