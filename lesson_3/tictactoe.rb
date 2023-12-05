@@ -131,43 +131,49 @@ def empty_squares(brd)
   brd.keys.select { |num| brd[num] == INITIAL_MARKER }
 end
 
+def player_place_piece!(brd, square)
+  loop do
+    prompt "Choose a square (#{joinor(empty_squares(brd))}):"
+    square = gets.chomp.to_i
+    break if empty_squares(brd).include?(square)
+    prompt_message('valid_square')
+  end
+
+  brd[square] = PLAYER_MARKER
+end
+
+def computer_place_piece!(brd, square, difficulty)
+  square = nil
+  
+  # Checks offensive move
+  if difficulty == 'Expert' || difficulty == 'Hard'
+    WINNING_LINES.each do |line|
+      square = find_winning_square(line, brd, COMPUTER_MARKER)
+      break if square
+    end
+  end
+
+  # Checks defensive move
+  if difficulty == 'Expert' || difficulty == 'Hard' || difficulty == 'Medium'
+    WINNING_LINES.each do |line|
+      square ||= find_winning_square(line, brd, PLAYER_MARKER)
+      break if square
+    end
+  end
+
+  if difficulty == 'Expert'
+    square ||= 5 unless brd[5] != INITIAL_MARKER
+  end
+  
+  square ||= empty_squares(brd).sample
+  brd[square] = COMPUTER_MARKER
+end
+
 def place_piece!(brd, current_player, difficulty)
   square = ''
   case current_player
-  when 'Player'
-    loop do
-      prompt "Choose a square (#{joinor(empty_squares(brd))}):"
-      square = gets.chomp.to_i
-      break if empty_squares(brd).include?(square)
-      prompt_message('valid_square')
-    end
-
-    brd[square] = PLAYER_MARKER
-  when 'Computer'
-    square = nil
-  
-    # Checks offensive move
-    if difficulty == 'Expert' || difficulty == 'Hard'
-      WINNING_LINES.each do |line|
-        square = find_winning_square(line, brd, COMPUTER_MARKER)
-        break if square
-      end
-    end
-
-    # Checks defensive move
-    if difficulty == 'Expert' || difficulty == 'Hard' || difficulty == 'Medium'
-      WINNING_LINES.each do |line|
-        square ||= find_winning_square(line, brd, PLAYER_MARKER)
-        break if square
-      end
-    end
-
-    if difficulty == 'Expert'
-      square ||= 5 unless brd[5] != INITIAL_MARKER
-    end
-    
-    square ||= empty_squares(brd).sample
-    brd[square] = COMPUTER_MARKER
+  when 'Player' then player_place_piece!(brd, square)    
+  when 'Computer' then computer_place_piece!(brd, square, difficulty)
   end
 end
 
@@ -225,7 +231,7 @@ def joinor(arr, separator = ',', preposition = 'or')
   end
 end
 
-def determine_turn
+def determine_starting_player
   prompt_message('turn')
   loop do
     turn = gets.chomp.downcase[0]
@@ -255,7 +261,7 @@ def play_game(wins)
   puts_message('setup')
   difficulty = set_difficulty
   total_rounds = get_total_rounds
-  current_player = determine_turn
+  current_player = determine_starting_player
 
   until total_rounds / 2 < wins[:Player] || total_rounds / 2 < wins[:Computer]
     board = initialize_board
@@ -272,14 +278,14 @@ def play_game(wins)
     if someone_won?(board)
       puts "     #{detect_winner(board)} wins!\n\n"
       winner = detect_winner(board)
+
       case winner
       when 'Player'
         wins[:Player] += 1
-        current_player = CURRENT_PLAYER.last
       when 'Computer'
-        wins[:Computer] += 1   # Fix this with hash
-        current_player = CURRENT_PLAYER.first
+        wins[:Computer] += 1 
       end
+
       round += 1
     else
       prompt_message('tie')
@@ -302,7 +308,7 @@ wins = { Player: 0,
 loop do
   clear_screen
   puts_message('welcome')
-  puts_message('directory')
+  prompt_message('directory')
   choice = get_choice
 
   case choice

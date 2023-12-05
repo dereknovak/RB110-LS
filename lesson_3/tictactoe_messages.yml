@@ -1,8 +1,9 @@
 directory: |
   What would you like to do?
-  1) New Game
-  2) View Instructions
-  3) Exit Program
+  
+     1) New Game
+     2) View Instructions
+     3) Exit Program
    
 instructions: |
   ====== INSTRUCTIONS ======
@@ -83,7 +84,9 @@ turn: |
   Who will go first?
     'Player'  'Computer'  'Random'
       
-valid_turn: Input 'Player', 'Computer', or 'Random'. ('p', 'c', 'r')
+valid_turn: |
+  Input 'p', 'c', or 'r'.
+   
 difficulty: |
   Set the difficulty:
     'Beginner'  'Medium'  'Hard'  'Expert'
