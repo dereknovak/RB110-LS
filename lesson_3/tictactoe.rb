@@ -8,6 +8,7 @@ MESSAGES = YAML.load_file('tictactoe_messages.yml')
 INITIAL_MARKER = ' '
 PLAYER_MARKER = 'X'
 COMPUTER_MARKER = 'O'
+CURRENT_PLAYER = %w(Player Computer)
 
 def clear_screen
   system('clear') || system('cls')
@@ -32,17 +33,18 @@ end
 
 # Display Methods
 
-def display_round_info(total_rounds, round, player_wins, computer_wins)
+def display_round_info(total_rounds, round, difficulty, wins)
   puts " ====== BEST OF #{total_rounds} ======"
+  puts "#{difficulty}".center(24)
   puts "         ROUND #{round}"
-  puts " Player: #{player_wins} | Computer: #{computer_wins}"
+  puts " Player: #{wins[:Player]} | Computer: #{wins[:Computer]}"
   puts ''
 end
 
 # rubocop:disable Metrics/AbcSize
-def display_board(brd, total_rounds, round, player_wins, computer_wins)
+def display_board(brd, total_rounds, round, difficulty, wins)
   clear_screen
-  display_round_info(total_rounds, round, player_wins, computer_wins)
+  display_round_info(total_rounds, round, difficulty, wins)
   puts "        |     |"
   puts "     #{brd[1]}  |  #{brd[2]}  |  #{brd[3]}"
   puts "        |     |"
@@ -58,10 +60,10 @@ def display_board(brd, total_rounds, round, player_wins, computer_wins)
 end
 # rubocop:enable Metrics/AbcSize
 
-def display_grand_champion(champion, total_rounds, round, player_wins, computer_wins)
+def display_grand_champion(champion, total_rounds, round, difficulty, wins)
   round -= 1
   clear_screen
-  display_round_info(total_rounds, round, player_wins, computer_wins)
+  display_round_info(total_rounds, round, difficulty, wins)
   puts "The #{champion} is the GRAND CHAMPION!\n\n"
 end
 
@@ -109,8 +111,8 @@ def get_yes_or_no
   end
 end
 
-def get_grand_champion(player_wins, computer_wins)
-  player_wins > computer_wins ? 'Player' : 'Computer'
+def get_grand_champion(wins)
+  wins[:Player] > wins[:Computer] ? 'Player' : 'Computer'
 end
 
 # Extraneous Methods
@@ -121,39 +123,68 @@ def initialize_board
   new_board
 end
 
+def reset_score(wins)
+  wins[:Player], wins[:Computer] = [0, 0]
+end
+
 def empty_squares(brd)
   brd.keys.select { |num| brd[num] == INITIAL_MARKER }
 end
 
-def player_places_piece!(brd)
+def place_piece!(brd, current_player, difficulty)
   square = ''
-  loop do
-    prompt "Choose a square (#{joinor(empty_squares(brd))}):"
-    square = gets.chomp.to_i
-    break if empty_squares(brd).include?(square)
-    prompt_message('valid_square')
-  end
+  case current_player
+  when 'Player'
+    loop do
+      prompt "Choose a square (#{joinor(empty_squares(brd))}):"
+      square = gets.chomp.to_i
+      break if empty_squares(brd).include?(square)
+      prompt_message('valid_square')
+    end
 
-  brd[square] = PLAYER_MARKER
+    brd[square] = PLAYER_MARKER
+  when 'Computer'
+    square = nil
+  
+    # Checks offensive move
+    if difficulty == 'Expert' || difficulty == 'Hard'
+      WINNING_LINES.each do |line|
+        square = find_winning_square(line, brd, COMPUTER_MARKER)
+        break if square
+      end
+    end
+
+    # Checks defensive move
+    if difficulty == 'Expert' || difficulty == 'Hard' || difficulty == 'Medium'
+      WINNING_LINES.each do |line|
+        square ||= find_winning_square(line, brd, PLAYER_MARKER)
+        break if square
+      end
+    end
+
+    if difficulty == 'Expert'
+      square ||= 5 unless brd[5] != INITIAL_MARKER
+    end
+    
+    square ||= empty_squares(brd).sample
+    brd[square] = COMPUTER_MARKER
+  end
 end
 
-def computer_places_piece!(brd)
-  square = nil
+def set_difficulty
+  prompt_message('difficulty')
   
-  # Checks offensive move
-  WINNING_LINES.each do |line|
-    square = find_winning_square(line, brd, COMPUTER_MARKER)
-    break if square
-  end
+  loop do
+    difficulty = gets.chomp[0]
 
-  # Checks defensive move
-  WINNING_LINES.each do |line|
-    square ||= find_winning_square(line, brd, PLAYER_MARKER)
-    break if square
+    case difficulty
+    when 'b' then return 'Beginner'       # See `place_piece!` for
+    when 'm' then return 'Medium'         # difficulty differences
+    when 'h' then return 'Hard'
+    when 'e' then return 'Expert'
+    else     prompt_message('valid_diff')
+    end
   end
-
-  square ||= empty_squares(brd).sample
-  brd[square] = COMPUTER_MARKER
 end
 
 def find_winning_square(line, board, marker)
@@ -194,55 +225,79 @@ def joinor(arr, separator = ',', preposition = 'or')
   end
 end
 
+def determine_turn
+  prompt_message('turn')
+  loop do
+    turn = gets.chomp.downcase[0]
+    case turn
+    when 'p' then return CURRENT_PLAYER.first
+    when 'c' then return CURRENT_PLAYER.last
+    when 'r' then return CURRENT_PLAYER.sample
+    else     prompt_message('valid_turn')
+    end
+  end
+end
+
+def alternate_player(current_player)
+  case current_player
+  when 'Player' then 'Computer'
+  when 'Computer' then 'Player'
+  end
+end
+
 # Main Tic-Tac-Toe game
 
-def play_game
+def play_game(wins)
+  clear_screen
   round = 1
-  player_wins = 0
-  computer_wins = 0
-  total_rounds = get_total_rounds
+  reset_score(wins)
 
-  until total_rounds / 2 < player_wins || total_rounds / 2 < computer_wins
+  puts_message('setup')
+  difficulty = set_difficulty
+  total_rounds = get_total_rounds
+  current_player = determine_turn
+
+  until total_rounds / 2 < wins[:Player] || total_rounds / 2 < wins[:Computer]
     board = initialize_board
 
     loop do
-      display_board(board, total_rounds, round, player_wins, computer_wins)
-
-      player_places_piece!(board)
+      display_board(board, total_rounds, round, difficulty, wins)
+      place_piece!(board, current_player, difficulty)
+      current_player = alternate_player(current_player)
       break if someone_won?(board) || board_full?(board)
-
-      display_board(board, total_rounds, round, player_wins, computer_wins)
-      prompt_message('thinking')
-      # sleep(2)
-
-      computer_places_piece!(board)
-      break if someone_won?(board) || board_full?(board)
-
-      display_board(board, total_rounds, round, player_wins, computer_wins)
     end
 
-    display_board(board, total_rounds, round, player_wins, computer_wins)
+    display_board(board, total_rounds, round, difficulty, wins)
 
     if someone_won?(board)
       puts "     #{detect_winner(board)} wins!\n\n"
-      case detect_winner(board)
-      when 'Player'   then player_wins += 1
-      when 'Computer' then computer_wins += 1
+      winner = detect_winner(board)
+      case winner
+      when 'Player'
+        wins[:Player] += 1
+        current_player = CURRENT_PLAYER.last
+      when 'Computer'
+        wins[:Computer] += 1   # Fix this with hash
+        current_player = CURRENT_PLAYER.first
       end
       round += 1
     else
       prompt_message('tie')
+      current_player = CURRENT_PLAYER.sample
     end
     continue_program
   end
 
-  display_board(board, total_rounds, round, player_wins, computer_wins)
-  champion = get_grand_champion(player_wins, computer_wins)
-  display_grand_champion(champion, total_rounds, round, player_wins, computer_wins)
+  display_board(board, total_rounds, round, difficulty, wins)
+  champion = get_grand_champion(wins)
+  display_grand_champion(champion, total_rounds, round, difficulty, wins)
   continue_program
 end
 
 # MAIN PROGRAM
+
+wins = { Player: 0,
+         Computer: 0 }
 
 loop do
   clear_screen
@@ -251,7 +306,7 @@ loop do
   choice = get_choice
 
   case choice
-  when '1' then play_game
+  when '1' then play_game(wins)
   when '2' then display_instructions
   when '3' then break
   end

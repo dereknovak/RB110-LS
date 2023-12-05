@@ -7,10 +7,18 @@ directory: |
 instructions: |
   ====== INSTRUCTIONS ======
 
-  The familiar game you love, now brought to you as a computer program! Each player takes turns placing their tile in one of the 9 squares. First player to get 3 in a row wins!
+  - The familiar game you love, now brought to you as a computer program! Each player takes turns placing their tile in one of the 9 squares. First player to get 3 in a row wins!
   
   GAMEPLAY:
-  When placing a tile, input an integer between 1-9, then [ENTER]. Below shows which square corresponds to each integer.
+  - Input '1' to begin playing game.
+  - Select the number of total rounds played. Because a winner is determined by having more wins than the other, only an odd number of rounds can be created.
+
+     Best of 3           Best of 5
+  Must win 2 games    Must win 3 games
+
+  - Select whether the Player or Computer has the first move. Each subsequent round, the LOSING player goes first. If a tie is determined, the round is repeated with a random player starting.
+  
+  - When placing a tile, input an integer between 1-9. Each square is represented by a specific integer, as indicated below:
 
        |     |
     1  |  2  |  3
@@ -24,10 +32,10 @@ instructions: |
     7  |  8  |  9
        |     |
 
-  Each player takes turns placing a tile in an empty square until a winner is determined or the board is filled.
+  - Each player takes turns placing a tile in an empty square until a winner is determined or the board is filled.
 
   HOW TO WIN:
-  A winning game can be achieved with 3 consecutive tiles either horizontally, vertically, or diagonally.
+  - A winning game can be achieved with 3 consecutive tiles either horizontally, vertically, or diagonally.
 
       Horizontal           Vertical             Diagonal
 
@@ -43,10 +51,14 @@ instructions: |
        |     |           X  |     |              |     |   X   
        |     |              |     |              |     |      
 
-  If all squares are filled and no winner is present, the game is considered a 'tie' and the round will repeat.
+  - If all squares are filled and no winner is present, the game is considered a 'tie' and the round will repeat.
+
+  - After winning more than half of the total rounds, the winner is named the GRAND CHAMPION.
    
 valid_square: Sorry, that's not a valid choice.
-tie: "It's a tie!"
+tie: |
+  It's a tie!
+   
 again?: Play again? (y/n)
 welcome: |
   ====== Welcome to Tic-Tac-Toe ======
@@ -57,11 +69,26 @@ goodbye: |
    
 continue?: Press [ENTER] to continue.
 yes_or_no: Invalid choice. Must input 'y' or 'n'.
-rounds?: "Choose the total number of rounds:"
+rounds?: |
+  Choose the total number of rounds:
+     1  3  5  7  9
+      
 valid_integer: Must be a whole number.
 odd_integer: Must be an odd integer greater than zero.
 valid_choice: Invalid choice. Must input '1', '2', or '3'.
 too_many: |
   Wow, you're quite an ambitious fellow!
   => Let's keep it below 10 rounds for today. :)
+turn: |
+  Who will go first?
+    'Player'  'Computer'  'Random'
+      
+valid_turn: Input 'Player', 'Computer', or 'Random'. ('p', 'c', 'r')
+difficulty: |
+  Set the difficulty:
+    'Beginner'  'Medium'  'Hard'  'Expert'
    
+valid_dif: Input 'b', 'm', 'h', or 'e'.
+setup: |
+  ====== GAME SETUP ======
+    
