@@ -64,7 +64,10 @@ def display_grand_champion(champion, total_rounds, round, difficulty, wins)
   round -= 1
   clear_screen
   display_round_info(total_rounds, round, difficulty, wins)
-  puts "The #{champion} is the GRAND CHAMPION!\n\n"
+  case champion
+  when 'Player' then puts_message('player_champion')
+  when 'Computer' then puts_message('computer_champion')
+  end
 end
 
 def display_instructions
@@ -104,7 +107,7 @@ end
 
 def get_yes_or_no
   loop do
-    choice = gets.chomp
+    choice = gets.chomp.downcase
     return 'y' if choice.start_with?('y')
     return 'n' if choice.start_with?('n')
     prompt_message('yes_or_no')
@@ -251,53 +254,67 @@ def alternate_player(current_player)
   end
 end
 
+def play_again?
+  prompt_message('again?')
+  answer = get_yes_or_no
+end
+
 # Main Tic-Tac-Toe game
 
 def play_game(wins)
   clear_screen
-  round = 1
-  reset_score(wins)
+
 
   puts_message('setup')
   difficulty = set_difficulty
   total_rounds = get_total_rounds
-  current_player = determine_starting_player
+  starting_player = determine_starting_player
+  current_player = starting_player
 
-  until total_rounds / 2 < wins[:Player] || total_rounds / 2 < wins[:Computer]
-    board = initialize_board
+  loop do
+    round = 1
+    reset_score(wins)
+    current_player = starting_player
 
-    loop do
+    until total_rounds / 2 < wins[:Player] || total_rounds / 2 < wins[:Computer]
+      board = initialize_board
+      
+      loop do
+        display_board(board, total_rounds, round, difficulty, wins)
+        prompt_message('thinking') || sleep(2) if current_player == 'Computer'
+        place_piece!(board, current_player, difficulty)
+        current_player = alternate_player(current_player)
+        break if someone_won?(board) || board_full?(board)
+      end
+
       display_board(board, total_rounds, round, difficulty, wins)
-      place_piece!(board, current_player, difficulty)
-      current_player = alternate_player(current_player)
-      break if someone_won?(board) || board_full?(board)
+
+      if someone_won?(board)
+        puts "#{detect_winner(board)} wins!\n".center(24)
+        winner = detect_winner(board)
+
+        case winner
+        when 'Player'
+          wins[:Player] += 1
+        when 'Computer'
+          wins[:Computer] += 1 
+        end
+
+        round += 1
+      else
+        prompt_message('tie')
+        current_player = CURRENT_PLAYER.sample
+      end
+      continue_program
     end
 
     display_board(board, total_rounds, round, difficulty, wins)
-
-    if someone_won?(board)
-      puts "     #{detect_winner(board)} wins!\n\n"
-      winner = detect_winner(board)
-
-      case winner
-      when 'Player'
-        wins[:Player] += 1
-      when 'Computer'
-        wins[:Computer] += 1 
-      end
-
-      round += 1
-    else
-      prompt_message('tie')
-      current_player = CURRENT_PLAYER.sample
-    end
+    champion = get_grand_champion(wins)
+    display_grand_champion(champion, total_rounds, round, difficulty, wins)
+    
     continue_program
+    break if play_again? == 'n'
   end
-
-  display_board(board, total_rounds, round, difficulty, wins)
-  champion = get_grand_champion(wins)
-  display_grand_champion(champion, total_rounds, round, difficulty, wins)
-  continue_program
 end
 
 # MAIN PROGRAM

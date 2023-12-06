@@ -60,7 +60,10 @@ valid_square: Sorry, that's not a valid choice.
 tie: |
   It's a tie!
    
-again?: Play again? (y/n)
+again?: |
+  Would you like a rematch? (Same rules)
+    'Yes'   'No'
+   
 welcome: |
   ====== Welcome to Tic-Tac-Toe ======
    
@@ -76,7 +79,7 @@ rounds?: |
       
 valid_integer: Must be a whole number.
 odd_integer: Must be an odd integer greater than zero.
-valid_choice: Invalid choice. Must input '1', '2', or '3'.
+valid_choice: Must input '1', '2', or '3'.
 too_many: |
   Wow, you're quite an ambitious fellow!
   => Let's keep it below 10 rounds for today. :)
@@ -94,4 +97,21 @@ difficulty: |
 valid_dif: Input 'b', 'm', 'h', or 'e'.
 setup: |
   ====== GAME SETUP ======
-    
+player_champion: |
+  ###   #      ##   #   #  ####  ###
+  #  #  #     #  #  #   #  #     #  #
+  ###   #     ####   ###   ###   ###
+  #     #     #  #    #    #     #  #
+  #     ####  #  #    #    ####  #  #
+  
+  #       #   #####   ##    #    ####
+  #       #     #     # #   #   #
+  #   #   #     #     #  #  #    ###
+   #  #  #      #     #   # #       #
+    ## ##     #####   #    ##   ####
+
+  The Player is the GRAND CHAMPION!
+   
+computer_champion: |
+  The computer is the grand champion... yay.
+   
