@@ -9,6 +9,7 @@ INITIAL_MARKER = ' '
 PLAYER_MARKER = 'X'
 COMPUTER_MARKER = 'O'
 CURRENT_PLAYER = %w(Player Computer)
+DIFFICULTY = %w(Expert Hard Medium Beginner)
 
 def clear_screen
   system('clear') || system('cls')
@@ -161,6 +162,12 @@ end
 
 # Gameplay Methods
 
+def take_turn(board, total_rounds, round, difficulty, wins, current_player)
+  display_board(board, total_rounds, round, difficulty, wins)
+  puts_message('thinking') || sleep(1.2) if current_player == 'Computer'
+  place_piece!(board, current_player, difficulty)
+end
+
 def place_piece!(brd, current_player, difficulty)
   square = nil
   case current_player
@@ -180,24 +187,20 @@ def player_place_piece!(brd, square)
   brd[square] = PLAYER_MARKER
 end
 
-# rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity
-# rubocop:disable Metrics/PerceivedComplexity
 def computer_place_piece!(brd, square, difficulty)
-  if difficulty == 'Expert' || difficulty == 'Hard'
-    square ||= offensive_mode(brd, square)
-  end
+  possible_moves = [(5 if brd[5] == INITIAL_MARKER),
+                    offensive_mode(brd, square),
+                    defensive_mode(brd, square),
+                    empty_squares(brd).sample]
 
-  if difficulty == 'Expert' || difficulty == 'Hard' || difficulty == 'Medium'
-    square ||= defensive_mode(brd, square)
+  counter = DIFFICULTY.index(difficulty)
+  until counter > 3
+    square ||= possible_moves[counter]
+    counter += 1
   end
-
-  square ||= 5 if difficulty == 'Expert' && brd[5] == INITIAL_MARKER
-  square ||= empty_squares(brd).sample
 
   brd[square] = COMPUTER_MARKER
 end
-# rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity
-# rubocop:enable Metrics/PerceivedComplexity
 
 def offensive_mode(brd, square)
   WINNING_LINES.each do |line|
@@ -218,10 +221,7 @@ def defensive_mode(brd, square)
 end
 
 def alternate_player(current_player)
-  case current_player
-  when 'Player' then 'Computer'
-  when 'Computer' then 'Player'
-  end
+  current_player == 'Player' ? 'Computer' : 'Player'
 end
 
 # Score Methods
@@ -259,6 +259,16 @@ def determine_champion(wins)
   wins[:Player] > wins[:Computer] ? 'Player' : 'Computer'
 end
 
+def enough_wins?(total_rounds, wins)
+  total_rounds / 2 < wins[:Player] || total_rounds / 2 < wins[:Computer]
+end
+
+def score_winner(board, wins)
+  puts "#{detect_winner(board)} wins!\n".center(24)
+  winner = detect_winner(board)
+  increment_score(wins, winner)
+end
+
 # Board Methods
 
 def initialize_board
@@ -283,8 +293,8 @@ end
 
 # Main Game Method
 
-# rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity
-# rubocop:disable Metrics/MethodLength, Metrics/PerceivedComplexity
+# rubocop:disable Metrics/AbcSize
+# rubocop:disable Metrics/MethodLength
 def play_tictactoe(wins)
   clear_screen
 
@@ -302,13 +312,11 @@ def play_tictactoe(wins)
     current_player = starting_player
 
     # Main Game Begins
-    until total_rounds / 2 < wins[:Player] || total_rounds / 2 < wins[:Computer]
+    until enough_wins?(total_rounds, wins)
       board = initialize_board
 
       loop do
-        display_board(board, total_rounds, round, difficulty, wins)
-        puts_message('thinking') || sleep(1.2) if current_player == 'Computer'
-        place_piece!(board, current_player, difficulty)
+        take_turn(board, total_rounds, round, difficulty, wins, current_player)
         current_player = alternate_player(current_player)
         break if someone_won?(board) || board_full?(board)
       end
@@ -316,9 +324,7 @@ def play_tictactoe(wins)
       display_board(board, total_rounds, round, difficulty, wins)
 
       if someone_won?(board)
-        puts "#{detect_winner(board)} wins!\n".center(24)
-        winner = detect_winner(board)
-        increment_score(wins, winner)
+        score_winner(board, wins)
         round += 1
       else
         prompt_message('tie')
@@ -336,8 +342,8 @@ def play_tictactoe(wins)
     break if play_again? == 'n'
   end
 end
-# rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity
-# rubocop:enable Metrics/MethodLength, Metrics/PerceivedComplexity
+# rubocop:enable Metrics/AbcSize
+# rubocop:enable Metrics/MethodLength
 
 # MAIN PROGRAM
 
