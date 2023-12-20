@@ -188,7 +188,7 @@ def player_place_piece!(brd, square)
 end
 
 def computer_place_piece!(brd, square, difficulty)
-  possible_moves = [(5 if brd[5] == INITIAL_MARKER),
+  possible_moves = [middle_square(brd),
                     offensive_mode(brd, square),
                     defensive_mode(brd, square),
                     empty_squares(brd).sample]
@@ -218,6 +218,10 @@ def defensive_mode(brd, square)
   end
 
   square
+end
+
+def middle_square(brd)
+  5 if brd[5] == INITIAL_MARKER
 end
 
 def alternate_player(current_player)
