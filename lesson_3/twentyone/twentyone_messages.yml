@@ -1,20 +1,90 @@
 directory: |
-  Welcome to Twenty-One!
+  ===== Welcome to Twenty-One! =====
 
   What would you like to do?
+  
   1. New Game
   2. View Instructions
   3. Quit
    
 instructions: |
-  Below are the instructions:
+  === Welcome to Twenty-One! ===
 
-  1.
-  2.
-  3.
+  It's YOU versus the DEALER. The player closest to 21 without going over wins!
+
+
+
+  *** CARD VALUES ***
+
+  - All numbered cards are equal to their value.
+  
+    Jack   - 10
+    Queen  - 10
+    King   - 10
+    Ace    - 1 or 11
+
+  - Jokers have been removed.
+
+
+
+  *** GAMEPLAY ***
+  
+  SELECT TOTAL ROUNDS
+  - Select the number of total rounds played. Because a winner is determined by having more wins than the other, only an odd number of rounds can be created.
+
+       Best of 3           Best of 5
+    Must win 2 games    Must win 3 games
+
+  VIEW FIRST CARDS
+  - Before the game begins, both the PLAYER and DEALER are dealt 2 cards.
+    - Both PLAYER cards are visible.
+    - Only 1 of the DEALER cards is visible to the PLAYER.
+
+  PLAYER TURN
+  - The PLAYER has the first opportunity for Twenty-One.
+  - The PLAYER can either HIT or STAY each turn.
+
+    HIT
+    - The DEALER deals another card.
+
+    STAY
+    - No cards are dealt and the current sum of cards remains.
+
+  DEALER TURN
+  - After the PLAYER finishes without a BUST, the DEALER has their opportunity for Twenty-One.
+  - The DEALER can HIT or STAY each turn.
+
+
+
+  *** HOW TO WIN ***
+
+  ROUND WINNER
+  - If the total sum of cards is greater than 21 after a HIT, then it is a BUST. The opposing player wins that round.
+  - If neither player has a BUST, then the player closest to 21 wins.
+  - If both players share the same score, it's a TIE and the round is repeated.
+
+  GRAND CHAMPION
+  - After winning more than half of the total rounds, the player is deemed the GRAND CHAMPION.
+      
+rounds: |
+  How many total rounds?
+
+  Best of:
+   
+valid_rounds: |
+  Choose from 1, 3, 5, 7, or 9.
    
 continue: |
   Press [ENTER] to continue.
+   
+dealer_cards: |
+  Press [ENTER] to view dealer's cards.
+   
+start_game: |
+  Press [ENTER] to start game.
+   
+next_round: |
+  Press [ENTER] to begin next round.
    
 loading:
   ------------------
@@ -53,7 +123,7 @@ player_bust: |
   ##  ##  ##  ##      ##    ##
   #####    ####   #####     ##
 
-  Dealer Wins.
+  Dealer wins.
    
 dealer_bust: |
   #####   ##  ##   #####  ######
@@ -88,9 +158,25 @@ again?: |
 yes_no: |
   Input 'y' or 'n'.
    
-   
+player_champion: |
+  ###   #      ##   #   #  ####  ###
+  #  #  #     #  #  #   #  #     #  #
+  ###   #     ####   ###   ###   ###
+  #     #     #  #    #    #     #  #
+  #     ####  #  #    #    ####  #  #
+  
+  #       #   #####   ##    #    ####
+  #       #     #     # #   #   #
+  #   #   #     #     #  #  #    ###
+   #  #  #      #     #   # #       #
+    ## ##     #####   #    ##   ####
 
+  The Player is the GRAND CHAMPION!
    
-
+dealer_champion: |
+  The Dealer is the GRAND CHAMPION.
    
+goodbye: |
+  Thanks for playing Twenty-One!
+        See you next time.
    

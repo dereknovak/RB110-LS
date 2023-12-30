@@ -15,7 +15,7 @@ def load_game
 
   17.times do |i|
     print '█'
-    sleep(0.02 * i)
+    sleep(0.015 * i)
   end
 
   sleep(0.3)
@@ -76,15 +76,30 @@ def display_first_2_cards(player_hand, dealer_hand)
   puts "Player's Cards\n\n"
   display_cards(player_hand)
 
+  continue?('dealer_cards')
+
   puts "Dealer's Cards\n\n"
   display_cards(dealer_hand)
   puts_message('mystery')
 
-  continue?
+  continue?('start_game')
 end
 
-def display_current_game(player, cards, sum)
+def display_round(round)
   clear_screen
+
+  puts ''
+  puts "#########\n\n"
+  puts "ROUND #{round}\n".center(10)
+  puts "#########"
+  puts ''
+end
+
+def display_current_game(player, cards, sum, score, round)
+  clear_screen
+
+  puts "ROUND: #{round}".center(20)
+  puts "Player: #{score[:player]} | Dealer: #{score[:dealer]}\n\n"
 
   puts "=== #{player.upcase} TURN ===\n\n"
   puts "Total Score: #{sum}\n\n"
@@ -92,10 +107,22 @@ def display_current_game(player, cards, sum)
   display_cards(cards)
 end
 
+def display_champion(round, score, champion)
+  clear_screen
+
+  puts "ROUND: #{round}"
+  puts "Player: #{score[:player]} | Dealer: #{score[:dealer]}\n\n"
+
+  case champion
+  when 'Player' then puts_message('player_champion')
+  when 'Dealer' then puts_message('dealer_champion')
+  end
+end
+
 # Input Methods
 
-def continue?
-  prompt_message('continue')
+def continue?(message = 'continue')
+  prompt_message(message)
   gets
 end
 
@@ -104,6 +131,17 @@ def choose_directory
     option = gets.chomp
     return option if option =~ /^[1-3]$/
     prompt_message('valid_directory')
+  end
+end
+
+def choose_game_duration
+  prompt_message('rounds')
+
+  valid_rounds = [1, 3, 5, 7, 9]
+  loop do
+    rounds = gets.chomp.to_i
+    return rounds if valid_rounds.include?(rounds)
+    prompt_message('valid_rounds')
   end
 end
 
@@ -127,6 +165,14 @@ end
 
 def retrieve_values(cards, sum = 0)
   cards.map { |card| determine_value(card, sum) }
+end
+
+def winner?(score, rounds)
+  score[:player] > rounds / 2.0 || score[:dealer] > rounds / 2.0
+end
+
+def determine_champion(score)
+  score[:player] > score[:dealer] ? 'Player' : 'Dealer' 
 end
 
 
@@ -180,64 +226,93 @@ end
 # Main Game Method
 
 def play_game
+  clear_screen
+  
   loop do
-    clear_screen
-    deck = shuffle_deck
-
-    player_hand = deal_card(deck), deal_card(deck)
-    dealer_hand = [deal_card(deck)]
-
-    player_values = retrieve_values(player_hand)
-    dealer_values = retrieve_values(dealer_hand)
-
-    player_sum = player_values.sum
-    dealer_sum = dealer_values.sum
-
-    display_first_2_cards(player_hand, dealer_hand)
-
     load_game
+    clear_screen
 
-    until player_sum >= MAX_SCORE
-      display_current_game('player', player_hand, player_sum)
-      choice = hit_or_stay?
-      break if choice == 'stay'
-      player_sum = take_turn(deck, player_hand, player_values, player_sum)
-    end
+    rounds = choose_game_duration
+    round = 1
+    score = { player: 0, dealer: 0 }
+    
+    loop do
+      display_round(round)
+      sleep(2)
+      
+      clear_screen
+      deck = shuffle_deck
+      tie = false
+      
+      player_hand = deal_card(deck), deal_card(deck)
+      dealer_hand = [deal_card(deck)]
 
-    display_current_game('player', player_hand, player_sum)
+      player_values = retrieve_values(player_hand)
+      dealer_values = retrieve_values(dealer_hand)
 
-    if player_sum > MAX_SCORE
-      puts_message('player_bust')
-    elsif player_sum == MAX_SCORE
-      puts_message('twenty_one')
-    else
-      loop do
-        display_current_game('dealer', dealer_hand, dealer_sum)
-        sleep(1)
+      player_sum = player_values.sum
+      dealer_sum = dealer_values.sum
 
-        if dealer_sum < 17
-          dealer_sum = take_turn(deck, dealer_hand, dealer_values, dealer_sum)
-        else
-          break
+      display_first_2_cards(player_hand, dealer_hand)
+
+
+      until player_sum >= MAX_SCORE
+        display_current_game('player', player_hand, player_sum, score, round)
+        choice = hit_or_stay?
+        break if choice == 'stay'
+        player_sum = take_turn(deck, player_hand, player_values, player_sum)
+      end
+
+      display_current_game('player', player_hand, player_sum, score, round)
+
+      if player_sum > MAX_SCORE
+        score[:dealer] += 1
+        puts_message('player_bust')
+      elsif player_sum == MAX_SCORE
+        score[:player] += 1
+        puts_message('twenty_one')
+      else
+        loop do
+          display_current_game('dealer', dealer_hand, dealer_sum, score, round)
+          sleep(1)
+
+          if dealer_sum < 17
+            dealer_sum = take_turn(deck, dealer_hand, dealer_values, dealer_sum)
+          else
+            break
+          end
+
+          break if dealer_sum >= MAX_SCORE
         end
+        
+        display_current_game('dealer', dealer_hand, dealer_sum, score, round)
 
-        break if dealer_sum >= MAX_SCORE
+        if dealer_sum > MAX_SCORE
+          score[:player] += 1
+          puts_message('dealer_bust')
+        elsif player_sum > dealer_sum
+          puts "Too risky to hit again...\n\n"
+          sleep(1.5)
+          score[:player] += 1
+          puts_message('player_win')
+        elsif player_sum < dealer_sum
+          score[:dealer] += 1
+          puts_message('dealer_win')
+        else
+          prompt_message('tie')
+          tie = true
+        end
       end
       
-      display_current_game('dealer', dealer_hand, dealer_sum)
-
-      if dealer_sum > MAX_SCORE
-        puts_message('dealer_bust')
-      elsif player_sum > dealer_sum
-        puts "Too risky to hit again...\n\n"
-        sleep(1.5)
-        prompt_message('player_win')
-      elsif player_sum < dealer_sum
-        prompt_message('dealer_win')
-      else
-        prompt_message('tie')
-      end
+      continue?
+      
+      break if winner?(score, rounds)
+      round += 1 unless tie
     end
+
+    clear_screen
+    champion = determine_champion(score)
+    display_champion(round, score, champion)
 
     break unless play_again?
   end
@@ -264,13 +339,6 @@ loop do
   end 
 end
 
-=begin
-
-Things to work on:
-
-- Display player and computer cards before game
-- One by one show computer cards
-- Replay game?
-- Keep tracket of wins
-
-=end
+clear_screen
+puts ''
+puts_message('goodbye')
