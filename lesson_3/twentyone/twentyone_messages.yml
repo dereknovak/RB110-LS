@@ -1,0 +1,96 @@
+directory: |
+  Welcome to Twenty-One!
+
+  What would you like to do?
+  1. New Game
+  2. View Instructions
+  3. Quit
+   
+instructions: |
+  Below are the instructions:
+
+  1.
+  2.
+  3.
+   
+continue: |
+  Press [ENTER] to continue.
+   
+loading:
+  ------------------
+
+  Loading new game...
+
+  ------------------
+   
+valid_directory: |
+  Must input 1, 2, or 3.
+   
+mystery: |
+  +-------+
+  | ?   ? |
+  |       |
+  |   ?   |
+  |       |
+  | ?   ? |
+  +-------+
+   
+valid_move: |
+  Invalid Choice.
+  Hit:  'Hit'  /  'h'
+  Stay: 'Stay' /  's'
+   
+hit_or_stay: |
+  'Hit' or 'Stay'?
+   
+waiting: |
+  The next card is...
+   
+player_bust: |
+  #####   ##  ##   #####  ######
+  ##  ##  ##  ##  ##        ##
+  ## #    ##  ##   ####     ##
+  ##  ##  ##  ##      ##    ##
+  #####    ####   #####     ##
+
+  Dealer Wins.
+   
+dealer_bust: |
+  #####   ##  ##   #####  ######
+  ##  ##  ##  ##  ##        ##
+  ## #    ##  ##   ####     ##
+  ##  ##  ##  ##      ##    ##
+  #####    ####   #####     ##
+
+  Player wins.
+   
+twenty_one: |
+  #####     ##
+  #  ###   ###
+     ##     ##
+   ###      ##
+  ######  ######
+
+  Twenty-one!
+   
+player_win: |
+  Player wins
+   
+dealer_win: |
+  Dealer wins.
+   
+tie: |
+  It's a tie.
+   
+again?: |
+  Play again? (y/n)
+   
+yes_no: |
+  Input 'y' or 'n'.
+   
+   
+
+   
+
+   
+   

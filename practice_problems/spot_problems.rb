@@ -150,3 +150,47 @@ p solve(["abode","ABc","xyzD"]) == [4,3,1]
 p solve(["abide","ABc","xyz"]) == [4,3,0]
 p solve(["IAMDEFANDJKL","thedefgh","xyzDEFghijabc"])== [6,5,7]
 p solve(["encode","abc","xyzD","ABmD"]) == [1, 3, 1, 3]
+
+- Introductions
+- Overview of Assessment format:
+  => Written Assessment
+    - 1hr 45min time limit 
+    - Around 11 questions
+    - Use Markdown
+    - Clear, detailed, and precise answers
+    - Time management
+  => Interview Assessment
+    - 1 hour / 2 problems
+    - Focus: structured problem solving, Ruby fluency, and communication ability
+    - No documentation
+    - Be sure to complete PEDA before moving on to C
+    - Test code early and often
+    - Communicate! (and not just what you are typing)
+- Study Tips for Assessments:
+  => Practice problems
+  => Study with other students
+    - Try Gather.town (via #the-spot on Slack)
+- Questions?
+- Practice
+- Wrap up & feedback form
+
+More expectation on fluency than 109
+  transformation? selection? Which is best for the job?
+Try solving the same problem with different approaches (regex? range objects?)
+Written easy 4-9
+Interview med 1 and 2
+
+=begin
+ You are given a secret message you need to decipher. Here are the things you need to know to decipher it:
+# For each word:
+# the second and the last letter is switched (e.g. Hello becomes Holle)
+# the first letter is replaced by its character code (e.g. H becomes 72)
+# Note: there are no special characters used, only letters and spaces
+
+Given a string array words, return an array of all characters that show up in all strings within the words (including duplicates).
+
+p common_chars(["bella","label","roller"]) == ["e", "l", "l"]
+p common_chars(["cool","lock","cook"]) == ["c", "o"]
+p common_chars(["hello","goodbye","booya", "random"]) == ["o"]
+p common_chars(["aabbaaaa","ccdddddd","eeffee", "ggrrrrr", "yyyzzz"]) == []
+=end
