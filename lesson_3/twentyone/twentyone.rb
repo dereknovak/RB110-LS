@@ -150,8 +150,8 @@ end
 def determine_value(card, sum = 0)
   case card.last
   when 'A'
-                  1 if sum >= 11
-                 11 if sum <  11 
+                 return 1 if sum >= 11
+                 return 11 if sum < 11 
   when 'J'  then 10
   when 'Q' then  10
   when 'K'  then 10
@@ -164,7 +164,7 @@ def shuffle_deck
 end
 
 def retrieve_values(cards, sum = 0)
-  cards.map { |card| determine_value(card, sum) }
+  cards.map { |card| determine_value(card, sum, cards) }
 end
 
 def winner?(score, rounds)
@@ -175,6 +175,39 @@ def determine_champion(score)
   score[:player] > score[:dealer] ? 'Player' : 'Dealer' 
 end
 
+def declare_round_winner(score, player_sum, dealer_sum)
+  if busted?(dealer_sum)
+    score[:player] += 1
+    puts_message('dealer_bust')
+  elsif player_sum > dealer_sum
+    puts "Too risky to hit again...\n\n"
+    sleep(1.5)
+    score[:player] += 1
+    puts_message('player_win')
+  elsif player_sum < dealer_sum
+    score[:dealer] += 1
+    puts_message('dealer_win')
+  else
+    prompt_message('tie')
+    true
+  end
+end
+
+def too_risky?(dealer_sum)
+  dealer_sum > 16
+end
+
+def busted?(player_sum)
+  player_sum > MAX_SCORE
+end
+
+def twenty_one?(player_sum)
+  player_sum == MAX_SCORE
+end
+
+def won?(player_sum, dealer_sum)
+  dealer_sum > player_sum
+end
 
 # Gameplay Methods
 
@@ -205,10 +238,23 @@ def hit_or_stay?
   end
 end
 
-def take_turn(deck, hand, values, sum)
+def take_turn(deck, hand, values, sum = 0)
   hand << deal_card(deck)
-  values << determine_value(hand.last)
+  values << determine_value(hand.last, sum)
   values.sum
+end
+
+def dealer_turn(deck, score, dealer_hand, dealer_sum, dealer_values, player_sum, round)
+  loop do
+    display_current_game('dealer', dealer_hand, dealer_sum, score, round)
+    sleep(1)
+    dealer_sum = take_turn(deck, dealer_hand, dealer_values, dealer_sum)
+
+    return dealer_sum if busted?(dealer_sum) ||
+                         twenty_one?(dealer_sum) ||
+                         too_risky?(dealer_sum) ||
+                         won?(player_sum, dealer_sum)
+  end
 end
 
 def play_again?
@@ -229,34 +275,34 @@ def play_game
   clear_screen
   
   loop do
-    load_game
     clear_screen
-
+    
     rounds = choose_game_duration
     round = 1
     score = { player: 0, dealer: 0 }
-    
+
+    load_game
+
     loop do
       display_round(round)
-      sleep(2)
+      sleep(1.5)
       
       clear_screen
       deck = shuffle_deck
       tie = false
-      
-      player_hand = deal_card(deck), deal_card(deck)
-      dealer_hand = [deal_card(deck)]
+      player_hand = []
+      dealer_hand = []
+      player_values = []
+      dealer_values = []
 
-      player_values = retrieve_values(player_hand)
-      dealer_values = retrieve_values(dealer_hand)
-
-      player_sum = player_values.sum
-      dealer_sum = dealer_values.sum
+      player_sum = take_turn(deck, player_hand, player_values)
+      player_sum = take_turn(deck, player_hand, player_values, player_sum)
+     
+      dealer_sum = take_turn(deck, dealer_hand, dealer_values)
 
       display_first_2_cards(player_hand, dealer_hand)
 
-
-      until player_sum >= MAX_SCORE
+      until busted?(player_sum) || twenty_one?(player_sum)
         display_current_game('player', player_hand, player_sum, score, round)
         choice = hit_or_stay?
         break if choice == 'stay'
@@ -265,47 +311,19 @@ def play_game
 
       display_current_game('player', player_hand, player_sum, score, round)
 
-      if player_sum > MAX_SCORE
+      if busted?(player_sum)
         score[:dealer] += 1
         puts_message('player_bust')
       elsif player_sum == MAX_SCORE
         score[:player] += 1
         puts_message('twenty_one')
       else
-        loop do
-          display_current_game('dealer', dealer_hand, dealer_sum, score, round)
-          sleep(1)
-
-          if dealer_sum < 17
-            dealer_sum = take_turn(deck, dealer_hand, dealer_values, dealer_sum)
-          else
-            break
-          end
-
-          break if dealer_sum >= MAX_SCORE
-        end
-        
-        display_current_game('dealer', dealer_hand, dealer_sum, score, round)
-
-        if dealer_sum > MAX_SCORE
-          score[:player] += 1
-          puts_message('dealer_bust')
-        elsif player_sum > dealer_sum
-          puts "Too risky to hit again...\n\n"
-          sleep(1.5)
-          score[:player] += 1
-          puts_message('player_win')
-        elsif player_sum < dealer_sum
-          score[:dealer] += 1
-          puts_message('dealer_win')
-        else
-          prompt_message('tie')
-          tie = true
-        end
+        dealer_sum = dealer_turn(deck, score, dealer_hand, dealer_sum, dealer_values, player_sum, round)        
+        display_current_game('dealer', dealer_hand, dealer_sum, score, round)        
+        tie = declare_round_winner(score, player_sum, dealer_sum)
       end
       
       continue?
-      
       break if winner?(score, rounds)
       round += 1 unless tie
     end
@@ -325,7 +343,6 @@ MAX_SCORE = 21
 CARD_TYPES = [2, 3, 4, 5, 6, 7, 8, 9, 10, 'J', 'Q', 'K', 'A']
 SUITS = %w(hearts diamonds clubs spades)
 CARDS = SUITS.product(CARD_TYPES)
-
 
 loop do
   clear_screen

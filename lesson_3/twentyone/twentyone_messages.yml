@@ -86,13 +86,11 @@ start_game: |
 next_round: |
   Press [ENTER] to begin next round.
    
-loading:
+loading: |
   ------------------
-
   Loading new game...
-
   ------------------
-   
+    
 valid_directory: |
   Must input 1, 2, or 3.
    
