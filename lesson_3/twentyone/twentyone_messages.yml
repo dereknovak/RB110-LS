@@ -95,14 +95,14 @@ valid_directory: |
   Must input 1, 2, or 3.
    
 mystery: |
-  +-------+
-  | ?   ? |
-  |       |
-  |   ?   |
-  |       |
-  | ?   ? |
-  +-------+
-   
+  .    +-------+
+       | ?   ? |
+       |       |
+       |   ?   |
+       |       |
+       | ?   ? |
+       +-------+
+             
 valid_move: |
   Invalid Choice.
   Hit:  'Hit'  /  'h'
@@ -113,24 +113,19 @@ hit_or_stay: |
    
 waiting: |
   The next card is...
+
+hand_card: |
+  The Dealer hands you another card...
    
-player_bust: |
+save_score: |
+  Saving score...
+   
+bust: |
   #####   ##  ##   #####  ######
   ##  ##  ##  ##  ##        ##
   ## #    ##  ##   ####     ##
   ##  ##  ##  ##      ##    ##
   #####    ####   #####     ##
-
-  Dealer wins.
-   
-dealer_bust: |
-  #####   ##  ##   #####  ######
-  ##  ##  ##  ##  ##        ##
-  ## #    ##  ##   ####     ##
-  ##  ##  ##  ##      ##    ##
-  #####    ####   #####     ##
-
-  Player wins.
    
 twenty_one: |
   #####     ##
@@ -142,7 +137,7 @@ twenty_one: |
   Twenty-one!
    
 player_win: |
-  Player wins
+  Player wins.
    
 dealer_win: |
   Dealer wins.

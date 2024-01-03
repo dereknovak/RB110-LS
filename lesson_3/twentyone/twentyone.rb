@@ -49,37 +49,37 @@ def print_card(card)
   when 'spades'   then sym = '♠'
   end
 
-  puts "+-------+"
+  puts "+-------+".center(20)
   if card.last == 10
-    puts "|#{card.last}   #{card.last}|"
+    puts "|#{card.last}   #{card.last}|".center(20)
   else
-    puts "| #{card.last}   #{card.last} |"
+    puts "| #{card.last}   #{card.last} |".center(20)
   end
-  puts "|       |"
-  puts "|   #{sym}   |"
-  puts "|       |"
+  puts "|       |".center(20)
+  puts "|   #{sym}   |".center(20)
+  puts "|       |".center(20)
   if card.last == 10
-    puts "|#{card.last}   #{card.last}|"
+    puts "|#{card.last}   #{card.last}|".center(20)
   else
-    puts "| #{card.last}   #{card.last} |"
+    puts "| #{card.last}   #{card.last} |".center(20)
   end
-  puts "+-------+\n\n"
+  puts "+-------+\n\n".center(21)
 end
 
 def display_cards(cards)
   cards.each { |card| print_card(card) }
 end
 
-def display_first_2_cards(player_hand, dealer_hand)
+def display_first_2_cards(player_cards, dealer_cards)
   puts "=== First 2 Cards ===\n\n"
 
   puts "Player's Cards\n\n"
-  display_cards(player_hand)
+  display_cards(player_cards)
 
   continue?('dealer_cards')
 
   puts "Dealer's Cards\n\n"
-  display_cards(dealer_hand)
+  display_cards(dealer_cards)
   puts_message('mystery')
 
   continue?('start_game')
@@ -95,23 +95,28 @@ def display_round(round)
   puts ''
 end
 
-def display_current_game(player, cards, sum, score, round)
+def display_current_game(player, cards, round_score, game_score, round, rounds)
   clear_screen
-
-  puts "ROUND: #{round}".center(20)
-  puts "Player: #{score[:player]} | Dealer: #{score[:dealer]}\n\n"
-
+  display_game_total(game_score, rounds)
+  display_round_total(round_score, round)
+  
   puts "=== #{player.upcase} TURN ===\n\n"
-  puts "Total Score: #{sum}\n\n"
-
   display_cards(cards)
 end
 
-def display_champion(round, score, champion)
-  clear_screen
+def display_game_total(game_score, rounds)
+  puts "BEST OF #{rounds}".center(20)
+  puts "Player: #{game_score[:player]} | Dealer: #{game_score[:dealer]}\n\n"
+end
 
-  puts "ROUND: #{round}"
-  puts "Player: #{score[:player]} | Dealer: #{score[:dealer]}\n\n"
+def display_round_total(round_score, round)
+  puts "ROUND #{round}".center(20)
+  puts "Player: #{round_score[:player]} | Dealer: #{round_score[:dealer]}\n\n"
+end
+
+def display_champion(rounds, game_score, champion)
+  clear_screen
+  display_game_total(game_score, rounds)
 
   case champion
   when 'Player' then puts_message('player_champion')
@@ -147,11 +152,11 @@ end
 
 # Processing Methods
 
-def determine_value(card, sum = 0)
+def determine_value(card, round_score, player)
   case card.last
   when 'A'
-                 return 1 if sum >= 11
-                 return 11 if sum < 11 
+                 return 1 if round_score[player] >= 11
+                 return 11 if round_score[player] < 11 
   when 'J'  then 10
   when 'Q' then  10
   when 'K'  then 10
@@ -163,29 +168,27 @@ def shuffle_deck
   CARDS.shuffle
 end
 
-def retrieve_values(cards, sum = 0)
-  cards.map { |card| determine_value(card, sum, cards) }
+def winner?(game_score, rounds)
+  game_score[:player] > rounds / 2.0 || game_score[:dealer] > rounds / 2.0
 end
 
-def winner?(score, rounds)
-  score[:player] > rounds / 2.0 || score[:dealer] > rounds / 2.0
+def determine_champion(game_score)
+  game_score[:player] > game_score[:dealer] ? 'Player' : 'Dealer' 
 end
 
-def determine_champion(score)
-  score[:player] > score[:dealer] ? 'Player' : 'Dealer' 
-end
-
-def declare_round_winner(score, player_sum, dealer_sum)
-  if busted?(dealer_sum)
-    score[:player] += 1
-    puts_message('dealer_bust')
-  elsif player_sum > dealer_sum
+def declare_round_winner(game_score, round_score)
+  if busted?(:dealer, round_score)
+    game_score[:player] += 1
+    puts_message('bust')
+    sleep(1)
+    puts_message('player_win')
+  elsif round_score[:player] > round_score[:dealer]
     puts "Too risky to hit again...\n\n"
     sleep(1.5)
-    score[:player] += 1
+    game_score[:player] += 1
     puts_message('player_win')
-  elsif player_sum < dealer_sum
-    score[:dealer] += 1
+  elsif round_score[:player] < round_score[:dealer]
+    game_score[:dealer] += 1
     puts_message('dealer_win')
   else
     prompt_message('tie')
@@ -193,20 +196,20 @@ def declare_round_winner(score, player_sum, dealer_sum)
   end
 end
 
-def too_risky?(dealer_sum)
-  dealer_sum > 16
+def too_risky?(player, round_score)
+  round_score[player] > 16
 end
 
-def busted?(player_sum)
-  player_sum > MAX_SCORE
+def busted?(player, round_score)
+  round_score[player] > MAX_SCORE
 end
 
-def twenty_one?(player_sum)
-  player_sum == MAX_SCORE
+def twenty_one?(player, round_score)
+  round_score[player] == MAX_SCORE
 end
 
-def won?(player_sum, dealer_sum)
-  dealer_sum > player_sum
+def won?(round_score)
+  round_score[:dealer] > round_score[:player]
 end
 
 # Gameplay Methods
@@ -224,11 +227,11 @@ def hit_or_stay?
     if valid_choices.include?(move)
       case
       when move.start_with?('h')
-        puts "Dealer hands you another card...\n\n"
+        puts_message('hand_card')
         sleep(1.5)
         return 'hit'
       when move.start_with?('s')
-        puts "Saving score...\n\n"
+        puts_message('save_score')
         sleep(1.5)
         return 'stay'
       end
@@ -238,22 +241,21 @@ def hit_or_stay?
   end
 end
 
-def take_turn(deck, hand, values, sum = 0)
-  hand << deal_card(deck)
-  values << determine_value(hand.last, sum)
-  values.sum
+def take_turn(player, deck, round_score, cards)
+  cards << deal_card(deck)
+  round_score[player] += determine_value(cards.last, round_score, player)
 end
 
-def dealer_turn(deck, score, dealer_hand, dealer_sum, dealer_values, player_sum, round)
+def dealer_turn(deck, round_score, game_score, dealer_cards, round, rounds)
   loop do
-    display_current_game('dealer', dealer_hand, dealer_sum, score, round)
+    display_current_game('dealer', dealer_cards, round_score, game_score, round, rounds)
     sleep(1)
-    dealer_sum = take_turn(deck, dealer_hand, dealer_values, dealer_sum)
+    take_turn(:dealer, deck, round_score, dealer_cards)
 
-    return dealer_sum if busted?(dealer_sum) ||
-                         twenty_one?(dealer_sum) ||
-                         too_risky?(dealer_sum) ||
-                         won?(player_sum, dealer_sum)
+    return if busted?(:dealer, round_score) ||
+              twenty_one?(:dealer, round_score) ||
+              too_risky?(:dealer, round_score) ||
+              won?(round_score)
   end
 end
 
@@ -279,7 +281,7 @@ def play_game
     
     rounds = choose_game_duration
     round = 1
-    score = { player: 0, dealer: 0 }
+    game_score = { player: 0, dealer: 0 }
 
     load_game
 
@@ -290,47 +292,48 @@ def play_game
       clear_screen
       deck = shuffle_deck
       tie = false
-      player_hand = []
-      dealer_hand = []
-      player_values = []
-      dealer_values = []
+      round_score = { player: 0, dealer: 0 }
+      player_cards = []
+      dealer_cards = []
 
-      player_sum = take_turn(deck, player_hand, player_values)
-      player_sum = take_turn(deck, player_hand, player_values, player_sum)
+      take_turn(:player, deck, round_score, player_cards)
+      take_turn(:player, deck, round_score, player_cards)
      
-      dealer_sum = take_turn(deck, dealer_hand, dealer_values)
+      take_turn(:dealer, deck, round_score, dealer_cards)
 
-      display_first_2_cards(player_hand, dealer_hand)
+      display_first_2_cards(player_cards, dealer_cards)
 
-      until busted?(player_sum) || twenty_one?(player_sum)
-        display_current_game('player', player_hand, player_sum, score, round)
+      until busted?(:player, round_score) || twenty_one?(:player, round_score)
+        display_current_game('player', player_cards, round_score, game_score, round, rounds)
         choice = hit_or_stay?
         break if choice == 'stay'
-        player_sum = take_turn(deck, player_hand, player_values, player_sum)
+        take_turn(:player, deck, round_score, player_cards)
       end
 
-      display_current_game('player', player_hand, player_sum, score, round)
+      display_current_game('player', player_cards, round_score, game_score, round, rounds)
 
-      if busted?(player_sum)
-        score[:dealer] += 1
-        puts_message('player_bust')
-      elsif player_sum == MAX_SCORE
-        score[:player] += 1
+      if busted?(:player, round_score)
+        game_score[:dealer] += 1
+        puts_message('bust')
+        sleep(1)
+        puts_message('dealer_win')
+      elsif twenty_one?(:player, round_score)
+        game_score[:player] += 1
         puts_message('twenty_one')
       else
-        dealer_sum = dealer_turn(deck, score, dealer_hand, dealer_sum, dealer_values, player_sum, round)        
-        display_current_game('dealer', dealer_hand, dealer_sum, score, round)        
-        tie = declare_round_winner(score, player_sum, dealer_sum)
+        dealer_turn(deck, round_score, game_score, dealer_cards, round, rounds)        
+        display_current_game('dealer', dealer_cards, round_score, game_score, round, rounds)        
+        tie = declare_round_winner(game_score, round_score)
       end
       
       continue?
-      break if winner?(score, rounds)
+      break if winner?(game_score, rounds)
       round += 1 unless tie
     end
 
     clear_screen
-    champion = determine_champion(score)
-    display_champion(round, score, champion)
+    champion = determine_champion(game_score)
+    display_champion(rounds, game_score, champion)
 
     break unless play_again?
   end
