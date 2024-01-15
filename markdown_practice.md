@@ -124,3 +124,19 @@ end
 The `map` method is called on the array object `[1, 2, 3]` and gets passed a `do...end` block as an argument, binding each element to the block's parameter `num` throughout iteration. `map` will return a new array with transformed elements based on the return value of the last line of its block. Because each iteration of the block simply returns the string object `'hi'`, `map` will return the array object `['hi', 'hi', 'hi']`.
 
 ## 13
+
+```ruby
+[1, 2, 3].any? do |num|
+  num > 2
+end
+```
+The `any?` method is called on the array object `[1, 2, 3]` and gets passed a `do...end` block as an argument, binding each element to the block's parameter `num` throughout iteration. `any?` will return `true` if any of the elements evaluate as `true` based upon the return value of the last line in its block; otherwise, it will return `false`. Because each iteration of the block simply evaluates whether the current value of `num` is greater than `2`, and `3` will evaluate as `true`, `any?` returns `true`.
+
+## 14
+
+```ruby
+{ a: "ant", b: "bear", c: "cat" }.any? do |key, value|
+  value.size > 4
+end
+```
+The `any?` method is called on the hash object `{ a: "ant", b: "bear", c: "cat" }` and gets passed a `do...end` block as an argument, binding each key-value pair to the block's parameters `key` and `value`, respectively, throughout iteration. `any?` will return `true` if any of the elements evaluate as `true` based upon the evaluation of the last line in its block; otherwise, it will return `false`. Because the block simply evaluates whether the size of the current value of `value` is larger than `4`, and no element has a size larger than 4, `any?` will return `false`.
