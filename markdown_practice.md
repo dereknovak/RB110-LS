@@ -76,4 +76,51 @@ end
 ```
 In this example, the `select` method is called on the array object `[1, 2, 3]` and gets passed a `do...end` block as an argument, binding each element to the block's parameter `num` throughout iteration. The `select` method returns a new array object that contains only elements that evaluate as true from the block. Upon each iteration of the block, the block returns the sum of the current value of `num` and `1`. Because each of these returns will be an integer, and every integer evaluates as true in Ruby, `select` will return `[1, 2, 3]`.
 
+## 8
 
+```ruby
+[1, 2, 3].select do |num|
+  num + 1
+  puts num
+end
+```
+This problem will `1`, `2`, and `3` and return an empty array. Although line 2 returns the sum of the current value of `num` and `1`, it does not do anything with that value; therefore, when `num` is passed as argument to the `puts` method invocation on line 3, just its current value will be output. Because the `select` method returns a new array that contains only the elements that evaluate as true, and `puts` always returns `nil` (a falsy value), none of the elements will evaluate as true and therefore an empty array will be returned.
+
+## 9
+
+```ruby
+[1, 2, 3].map do |num|
+  num * 2
+end
+```
+The `map` method is called on the array object `[1, 2, 3]` and gets passed a `do...end` block as an argument, binding each element to the block's parameter `num` throughout iteration. `map` returns a new array with transformed elements based upon the last line in its block. Each iteration of the block returns the product of the current value of `num` and `2`, which will return `[2, 4, 6]` from `map` as a result.
+
+## 10
+
+```ruby
+[1, 2, 3].map do |num|
+  num.odd?
+end
+```
+The `map` method is called on the array object `[1, 2, 3]` and gets passed a `do...end` block as an argument, binding each element to the block's parameter `num` throughout iteration. `map` returns a new array with transformed elements based on the return value of the last line of its block. Because each iteration of the block returns a boolean object, representing if the integer is odd, `map` will return the array object `[true, false, true]` as a result.
+
+## 11
+
+```ruby
+[1, 2, 3].map do |num|
+  num.odd?
+  puts num
+end
+```
+The `map` method is called on the array object `[1, 2, 3]` and gets passed a `do...end` block as an argument, binding each element to the block's parameter `num` throughout iteration. `map` will return a new array with transformed elements based on the return value of the last line in its block. Upon each iteration of the block, a boolean is returned based on if the current value of `num` is odd; however, it does not do anything with this value. The current value is then output by invocation of the `puts` method, outputting `1`, `2`, then `3` to the console. Because `puts` always returns `nil`, and it evaluates on the last line of the block, `map` will return `[nil, nil, nil]`.
+
+## 12
+
+```ruby
+[1, 2, 3].map do |num|
+  'hi'
+end
+```
+The `map` method is called on the array object `[1, 2, 3]` and gets passed a `do...end` block as an argument, binding each element to the block's parameter `num` throughout iteration. `map` will return a new array with transformed elements based on the return value of the last line of its block. Because each iteration of the block simply returns the string object `'hi'`, `map` will return the array object `['hi', 'hi', 'hi']`.
+
+## 13
