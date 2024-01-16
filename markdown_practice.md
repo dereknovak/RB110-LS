@@ -140,3 +140,252 @@ The `any?` method is called on the array object `[1, 2, 3]` and gets passed a `d
 end
 ```
 The `any?` method is called on the hash object `{ a: "ant", b: "bear", c: "cat" }` and gets passed a `do...end` block as an argument, binding each key-value pair to the block's parameters `key` and `value`, respectively, throughout iteration. `any?` will return `true` if any of the elements evaluate as `true` based upon the evaluation of the last line in its block; otherwise, it will return `false`. Because the block simply evaluates whether the size of the current value of `value` is larger than `4`, and no element has a size larger than 4, `any?` will return `false`.
+
+## 15
+
+```ruby
+[1, 2, 3].all? do |num|
+  num > 2
+end
+```
+The `all?` method is called on the array object `[1, 2, 3]` and gets passed a `do...end` block as an argument, binding each element to the block's parameter `num` throughout iteration. `all?` will return `true` only if all elements evaluate as true on the last line of its block. Because `1` evaluates as false, the iteration short circuits and `all?` immediately returns `false`.
+
+## 16
+
+
+```ruby
+{ a: "ant", b: "bear", c: "cat" }.all? do |key, value|
+  value.length >= 3
+end
+```
+The `all?` method is called on the hash object `{ a: "ant", b: "bear", c: "cat" }` and gets passed a `do...end` block as an argument, binding each key-value pair to the block's parameters `key` and `value`, respectively, throughout iteration. `all?` will return `true` only if all elements evaluates as true on the last line of its block. Because every element's length is at least `3` characters long, all elements evaluate as true, resulting in `true` being returned from `all?`.
+
+## 17
+
+```ruby
+[1, 2, 3].each_with_index do |num, index|
+  puts "The index of #{num} is #{index}."
+end
+```
+The `each_with_index` method is called on the array object `[1, 2, 3]` and gets passed a `do...end` block as an argument, binding each element to the block's parameter `num` and its index to `index` throughout iteration. Upon each iteration of the block, the current value of​`num` and `index` is interpolated into the string `"The index of #{num} is #{index}."`, outputting a string such as `The index of 1 is 0.` for each element in the calling array by invocation of the `puts` method.
+
+## 18
+
+```ruby
+[1, 2, 3].each_with_object([]) do |num, array|
+  array << num if num.odd?
+end
+```
+The `each_with_object` method is called on the array object `[1, 2, 3]` and gets passed an empty array object and a `do...end` block as arguments, binding each element to the block's parameter `num` throughout iteration. The second parameter, `array`, acts as a placeholder variable, referencing the array object that will be returned from the method. Upon each iteration of the block, the `odd?` method checks whether the current value of `num` is an odd integer; if evaluated as true, that value will be concatenated into `array`. Because both `1` and `3` evaluate as `true`, both integers are concatenated into `array`, returning `[1, 3]` from `each_with_object`.
+
+## 19
+
+```ruby
+[1, 2, 3].first
+```
+The `first` method is called on the array object `[1, 2, 3]`, returning the integer `1`.
+
+## 20
+
+```ruby
+{ a: "ant", b: "bear", c: "cat" }.first(2)
+```
+The `first` method is called on the hash object `{ a: "ant", b: "bear", c: "cat" }` and gets passed `2` as an argument, returning `[[:a, "ant"], [:b, "bear"]]`, which represents the first 2 key-value pairs of the hash.
+
+## 21
+
+```ruby
+[1, 2, 3].include?(1)
+```
+The `include?` method is called on the array object `[1, 2, 3]` and gets passed `1` as an argument, which checks whether the calling array includes the element `1`. Because this evaluates as true, the boolean object `true` is returned.
+
+## 22
+
+```ruby
+[1, 2, 3].partition do |num|
+  num.odd?
+end
+```
+The `partition` method is called on the array object `[1, 2, 3]` and gets passed a `do...end` block as an argument, binding each element to the block's parameter `num` throughout iteration. `partition` separates elements into a 2 subarray nested array, split by truthy and falsy elements based upon the return value of the last line in its block. Because `1` and `3` are odd numbers and `2` is not, the array object `[[1, 3], [2]]` will be returned from `partition`.
+
+## Practice Problem 1
+
+What is the return value of the select method below? Why?
+```ruby
+[1, 2, 3].select do |num|
+  num > 5
+  'hi'
+end
+```
+The `select` method will return `[1, 2, 3]​`, which is a new array containing all elements from the calling array. `select` returns a new array that contains only the elements that evaluate as true based upon the last line of its block argument. Because everything in Ruby evaluates as true except for the objects `false` and `nil`, the string object `'hi'` is considered truthy and therefore the current element will be returned.
+
+## Practice Problem 2
+
+How does count treat the block's return value? How can we find out?
+```ruby
+['ant', 'bat', 'caterpillar'].count do |str|
+  str.length < 4
+end
+```
+The `count` method, when passed a block, will count the elements that evaluate as true based upon the last line of its block. In this example, both `'ant'` and `'bat'`have a string length that is less than `4`, which evaluates as true; therefore, `count` will return the integer `2`. This can be proven by assigning the return value to a new variable, then output it by invocation of the `puts` method.
+
+## Practice Problem 3
+
+What is the return value of reject in the following code? Why?
+```ruby
+[1, 2, 3].reject do |num|
+  puts num
+end
+```
+In this example, `reject` will return `[1, 2, 3]​`, which represents a new array object containing all of the elements from the calling array. `reject` returns a new array that contains only the elements from the calling array that its block returns a falsy value. Because the `puts` method invocation always returns `nil`, each iteration of the block will return a falsy value and therefore every element will be returned.
+
+## Practice Problem 4
+
+What is the return value of each_with_object in the following code? Why?
+```ruby
+['ant', 'bear', 'cat'].each_with_object({}) do |value, hash|
+  hash[value[0]] = value
+end
+```
+In this example, `each_with_object` will return `[ "a" => "ant, "b" => "bear", "c" => "cat"]`. The `each_with_object` is called on the array object `['ant', 'bear', 'cat']​` and gets passed `{}` and a `do...end` block as an argument, binding each element to the block's parameter `value` throughout iteration. The other parameter `hash` represents the placeholder variable that references the hash object that will be returned from the method. Upon each iteration of the block, the first letter of each value, represented by `value[0]`, is set as a key for `hash` with its value being the current value of `value`.
+
+## Practice Problem 5
+
+What does `shift` do in the follow code? How can we find out?
+```ruby
+hash = { a: 'ant', b: 'bear' }
+hash.shift
+```
+The `shift` method, when used with a hash, removes and returns the first key-value pair as an array. In this example, `[:a, "ant"]` would be returned. I was able to find this information within the Ruby Documentation for "class Hash" and locating the `#shift` method there.
+
+## Practice Problem 6
+
+What is the return value of the following statement? Why?
+```ruby
+['ant', 'bear', 'caterpillar'].pop.size
+```
+The `pop` method is called on the array object `['ant', 'bear', 'caterpillar']`, returning the element `'caterpillar'`. The `size` method is then called on this string object, returning the integer `11`, representing the length of characters present in the string.
+
+This example demonstrates the concept of *Method Chaining*. Method chaining allows a method to be called on the *return value* of a previous method call while on the same line of code. It's important to note that this does not mean that muliple methods are being called on the same object; it's simply a chain of method invocation.
+
+## Practice Problem 7
+
+What is the block's return value in the follow code? How is it determined? Also, what is the return value of `any?` in this code and what does it output?
+```ruby
+[1, 2, 3].any? do |num|
+  puts num
+  num.odd?
+end
+```
+While the block is set up to iterate 3 times, due to the calling array `[1, 2, 3]` containing 3 elements, it will only complete iteration one single time. The `any?` method returns `true` if any of the elements return a truthy value from the last line of its block. Because `1` is an odd integer, the iteration short-circuits as its condition has already been met and does not need to iterate any further, and `any?` will return `true`.
+
+This example will actually clearly demonstrate this short-circuit due to the `puts` method invocation, which outputs `1` to the console before the block returns its first, and only, value. No other elements are output as iteration has terminated.
+
+## Practice Problem 8
+
+How does `take` work? Is it destructive? How can we find out?
+```ruby
+arr = [1, 2, 3, 4, 5]
+arr.take(2)
+```
+The `take` method is an alias of `first`, which returns the first number of elements in the calling array based upon its integer argument. In this example, the first `2` elements are returned from the method as the array `[1, 2]`. This is not a destructive operation. We can find out more information about this method through the Ruby Documentation, specifically in the "class Array" section.
+
+## Practice Problem 9
+
+What is the return value of `map` in the following code? Why?
+```ruby
+{ a: 'ant', b: 'bear' }.map do |key, value|
+  if value.size > 3
+    value
+  end
+end
+```
+The `map` method is called on the hash object `{ a: 'ant', b: 'bear' }` and gets passed a `do...end` block as an argument, binding each key-value pair to the block's parameters `key` and `value`, respectively, throughout iteration. `map` will return an array with transformed elements, based upon the return value of the last line of its block. Upon each iteration of the block, an `if` condition is employed, which checks whether the character size of the current value of `value` is greater than 3. If evaluated as true, `value` is simply returned; otherwise, nothing happens and `nil` is returned. Because `ant` evaluates as false, `nil` will be returned for the first element; `bear` evaluates as true, so `bear` will be returned. This results in `map` returning the array `[nil, "bear"]`.
+
+## Practice Problem 9
+
+What is the return value of the follow code? Why?
+```ruby
+[1, 2, 3].map do |num|
+  if num > 1
+    puts num
+  else
+    num
+  end
+end
+```
+The `map` method is called on the array object `[1, 2, 3]` and gets passed a `do...end` block as an argument, binding each element to the block's parameter `num` throughout iteration. `map` returns a new array with the calling elements transformed based upon the return value of the last line of its block. Upon each iteration of the block, an `if` statement is employed, which first checks whether the current value of `num` is greater than `1`. If evaluated as true, `num` will be output by invocation of the `puts` method and `nil` will be returned (`puts` always returns `nil`); otherwise, `num` will just be returned.
+
+Because both `1` is not greater than `1`, `1` will be returned on the first iteration. Both `2` and `3` evaluate as true, therefore `nil` will be returned for both. This results in `map` returning the array `[1, nil, nil]`.
+
+# Working with Blocks
+
+## Example 1
+
+What's happening in this, seemingly simple, piece of code?
+```ruby
+[[1, 2], [3, 4]].each do |arr|
+  puts arr.first
+end
+```
+The `each` method is called on the nested array object `[[1, 2], [3, 4]]` and gets passed a `do...end` block as an argument, binding each subarray to the block's parameter `arr` throughout iteration. Upon each iteration of the block, the first element of the current subarray is output by invocation of the `puts` method. Because there are 2 subarrays, `1` and `3` will be output.
+
+`each` returns the calling array after iteration is complete. Because no destructive methods happened within iteration, `[[1, 2], [3, 4]]` will be returned.
+
+## Example 2
+
+```ruby
+[[1, 2], [3, 4]].map do |arr|
+  puts arr.first
+end
+```
+The `map` method is called on the nested array object `[[1, 2], [3, 4]]` and gets passed a `do...end` block as an argument, binding each subarray to the block's parameter `arr` throughout iteration. `map` returns a new array with the calling elements transformed based upon the return value of the last line of its block. Each iteration of the block simply outputs the first element of the current subarray and returns `nil` (`puts` always returns `nil`). Because there are 2 subarrays, `1` and `3` will output and `map` will return `[nil, nil]`.
+
+## Example 3
+
+```ruby
+[[1, 2], [3, 4]].map do |arr|
+  puts arr.first
+  arr.first
+end
+```
+The `map` method is called on the nested array object `[[1, 2], [3, 4]]` and gets passed a `do...end` block as an argument, binding each subarray to the block's parameter `arr` throughout iteration. `map` returns a new array with the calling elements transformed based upon the return value of the last line of its block. Upon each iteration of the block, the first element of the current subarray is output by invocation of the `puts` method, then the block returns that same element. This will output `1` and `3`, then return the array object `[1, 3]`. This differs from the previous example because `arr.first` exists on the last line of the block, while the `puts` method is on the penultimate line and therefore does not affect the return value of the block.
+
+## Example 4
+
+```ruby
+my_arr = [[18, 7], [3, 12]].each do |arr|
+  arr.each do |num|
+    if num > 5
+      puts num
+    end
+  end
+end
+```
+The `each` method is called on the nested array object `[[18, 7], [3, 12]]` and gets passed a `do...end` block as an argument, binding each subarray to the block's parameter `arr` throughout iteration. Upon each iteration of the block, the `each` method is called again on the current subarray and gets passed another `do...end` as an argument, binding each element of the subarray to the block's parameter `num` throughout iteration. Upon each iteration of the inner-block, an `if` condition is employed, which will output the current value of `num` if its value is greater that `5`. Because `18`, `7`, and `12` will evaluate as `true`, these integers will be output in sequence.
+
+The `each` method returns its calling array after iteration is complete. Because no destructive methods were called on elements of the calling nested array, `[[18, 7], [3, 12]]` will be returned from `each` and assigned to the initialized local variable `my_arr`.
+
+## Example 5
+
+```ruby
+[[1, 2], [3, 4]].map do |arr|
+  arr.map do |num|
+    num * 2
+  end
+end
+```
+The `map` method is called on the nested array object `[1, 2], [3, 4]]` and gets passed a `do...end` block as an argument, binding each subarray to the block's parameter `arr` throughout iteration. `map` returns a new array with the calling elements transformed based upon the return value of the last line of its block. Upon each iteration of the block, the `map` method is called again on the current subarray and gets passed another `do...end` block as an argument, binding each element of the subarray to the block's parameter `num` throughout iteration. Upon each iteration of the inner-block, the product of the current value of `num` and `2` is returned, which returns `[2, 4]` for the first subarray and `[6, 8]` for the second. Because this is the last line of the outer-block, the original `map` will return `[[2, 4], [6, 8]]`.
+
+## Example 6
+
+```ruby
+[{ a: 'ant', b: 'elephant' }, { c: 'cat' }].select do |hash|
+  hash.all? do |key, value|
+    value[0] == key.to_s
+  end
+end
+```
+The `select` method is called on the array object `[{ a: 'ant', b: 'elephant' }, { c: 'cat' }]` and gets passed a `do...end` block as an argument, binding each hash object to the block's parameter `hash` throughout iteration. `select` returns a new array the contains only the elements that evaluate as true on the last line of its block. Upon each iteration of the block, the `all?` method is called on the current hash and gets passed another `do...end` block as an argument, binding each key-value pair to the block's parameters `key` and `value`, respectively, throughout iteration. `all?` will only return `true` if all of its elements evaluate as true on the last line of its block. Each iteration of the block checks whether the first character of the current value of `value` is equal to its current key, converted to a string.
+
+For the first hash, `:a` evaluates as true but `:b` does not; therefore, the first iteration of `all?` returns `false`. For the second hash, `:c` evaluates as true, which is the only key-value pair; therefore, the second `all?` returns true. Because of these return values from `all?`, `select` will return `[{:c => 'cat'}]`.
