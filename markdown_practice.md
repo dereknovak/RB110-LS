@@ -389,3 +389,35 @@ end
 The `select` method is called on the array object `[{ a: 'ant', b: 'elephant' }, { c: 'cat' }]` and gets passed a `do...end` block as an argument, binding each hash object to the block's parameter `hash` throughout iteration. `select` returns a new array the contains only the elements that evaluate as true on the last line of its block. Upon each iteration of the block, the `all?` method is called on the current hash and gets passed another `do...end` block as an argument, binding each key-value pair to the block's parameters `key` and `value`, respectively, throughout iteration. `all?` will only return `true` if all of its elements evaluate as true on the last line of its block. Each iteration of the block checks whether the first character of the current value of `value` is equal to its current key, converted to a string.
 
 For the first hash, `:a` evaluates as true but `:b` does not; therefore, the first iteration of `all?` returns `false`. For the second hash, `:c` evaluates as true, which is the only key-value pair; therefore, the second `all?` returns true. Because of these return values from `all?`, `select` will return `[{:c => 'cat'}]`.
+
+## Example 7
+
+```ruby
+arr = [['1', '8', '11'], ['2', '6', '13'], ['2', '12', '15'], ['1', '8', '9']]
+
+arr.sort_by do |sub_arr|
+  sub_arr.map do |num|
+    num.to_i
+  end
+end
+```
+On line 1, local variable `arr` is initialized and references the nested array object `[['1', '8', '11'], ['2', '6', '13'], ['2', '12', '15'], ['1', '8', '9']]`. On line 3, the `sort_by` method is called on `arr` and gets passed a `do...end` block as an argument, binding each subarray to the block's parameter `sub_arr` throughout iteration. `sort_by` returns a new array, sorting each element based upon the the return value of the last line of its block. Upon each iteration of the block, the `map` method is called on the current subarray and gets passed another `do...end` block as an argument, binding each element to the block's parameter `num` throughout iteration. The `map` method iterates through a collection, returning a new array that contains transformed elements from the calling collection based upon the return value of the last line in its block. Each iteration of the inner-block converts the current element to an integer, resulting in `map` returning the same subarray but with integer objects rather than string ones.
+
+Because each element has been converted into an integer, sorting the elements will follow integer rules rather than string rules. As a result, `[["1", "8", "9"], ["1", "8", "11"], ["2", "6", "13"], ["2", "12", "15"]]` will be returned. It's important to note that, despite the elements being convert into an integer, the return values are strings. This is because `map` transformed them into integers so that `sort_by` understood *how* to sort the elements.
+
+## Example 8
+
+```ruby
+[[8, 13, 27], ['apple', 'banana', 'cantaloupe']].map do |arr|
+  arr.select do |item|
+    if item.to_s.to_i == item    # if it's an integer
+      item > 13
+    else
+      item.size < 6
+    end
+  end
+end
+```
+The `map` method is called on the nested array object `[[8, 13, 27], ['apple', 'banana', 'cantaloupe']]` and gets passed a `do...end` block as an argument, binding each subarray to the block's parameter `arr` throughout iteration. The `map` method iterates through a collection, returning a new array that contains transformed elements from the calling collection based upon the return value of the last line in its block. Upon each iteration of the block, the `select` method is called on the current subarray, binding each element to the block's parameter `item` throughout iteration. The `select` method iterates through a collection, returning a new collection that contains only the elements from the calling collection that evaluate as true based upon the return value of the last line of its block. Upon each iteration of the inner-block, an `if` statement is employed, which checks whether the current value of `item` is an integer. If evaluated as true, a boolean is returned based on if `item` is greater than `13`; otherwise, a boolean is returned based on if the character size of `item` is less than `6`.
+
+The first subarray will follow the `if` branch, as all elements are integers, returning `[27]` from `select`. The second subarray will follow the `else` branch, as all elements are strings, returning `['apple']`. These 2 transformed subarrays are then returned from `map`, resulting in the return value `[[27], ['apple']]`.
