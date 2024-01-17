@@ -421,3 +421,134 @@ end
 The `map` method is called on the nested array object `[[8, 13, 27], ['apple', 'banana', 'cantaloupe']]` and gets passed a `do...end` block as an argument, binding each subarray to the block's parameter `arr` throughout iteration. The `map` method iterates through a collection, returning a new array that contains transformed elements from the calling collection based upon the return value of the last line in its block. Upon each iteration of the block, the `select` method is called on the current subarray, binding each element to the block's parameter `item` throughout iteration. The `select` method iterates through a collection, returning a new collection that contains only the elements from the calling collection that evaluate as true based upon the return value of the last line of its block. Upon each iteration of the inner-block, an `if` statement is employed, which checks whether the current value of `item` is an integer. If evaluated as true, a boolean is returned based on if `item` is greater than `13`; otherwise, a boolean is returned based on if the character size of `item` is less than `6`.
 
 The first subarray will follow the `if` branch, as all elements are integers, returning `[27]` from `select`. The second subarray will follow the `else` branch, as all elements are strings, returning `['apple']`. These 2 transformed subarrays are then returned from `map`, resulting in the return value `[[27], ['apple']]`.
+
+## Example 9
+
+```ruby
+[[[1], [2], [3], [4]], [['a'], ['b'], ['c']]].map do |element1|
+  element1.each do |element2|
+    element2.partition do |element3|
+      element3.size > 0
+    end
+  end
+end
+```
+The `map` method is called on the nested array object `[[[1], [2], [3], [4]], [['a'], ['b'], ['c']]]` and gets passed a `do...end` block as an argument, binding each of the 2 subarrays to the block's parameter `element1` throughout iteration. The `map` method iterates through a collection, returning a new array that contains transformed elements from the calling collection based upon the return value of the last line in its block. Upon each iteration of the block, the `each` method is called on the current subarray and gets passed another `do...end` block as an argument, binding each inner subarray to the block's parameter `element2` throughout iteration. Upon each iteration of the middle block, the `partition` method is called on the current subarray and gets passed a third `do...end` block as an argument, binding each element to the block's parameter `element3` throughout iteration. The `partition` method returns a new array with element divided by truthy and falsy values based on the return value of the last line of its block.
+
+It's important to note that `each` returns itself, so as long as no destructive methods are called on the calling object, which there are none, `each` will return the original subarrays passed into it. That, in conjunction with being on the last line of `map`'s block, will simply just return a new array with all the original elements.
+
+## Example 10
+
+```ruby
+[[[1, 2], [3, 4]], [5, 6]].map do |arr|
+  arr.map do |el|
+    if el.to_s.to_i == el   # it's an integer
+      el + 1
+    else                    # it's an array
+      el.map do |n|
+        n + 1
+      end
+    end
+  end
+end
+```
+The `map` method is called on the 3-dimensional nested array object `[[[1, 2], [3, 4]], [5, 6]]` and gets passed a `do...end` block as an argument, binding each of the 2 subarrays to the block's parameter `arr` throughout iteration. The `map` method iterates through a collection, returning a new array that contains transformed elements from the calling collection based upon the return value of the last line in its block. Upon each iteration of the block, `map` again is called on the current subarray and gets passed another `do...end` block as an argument, binding each element to the block's parameter `el` throughout iteration. Upon each iteration of the middle block, an `if` statement is employed, which checks whether the current value of `el` is an integer. If evaluated as `true`, the sum of `el` and `1` is returned from the block; otherwise (an array object), a third `map` method is called on the subarray and gets passed a block as an argument, binding each element of the array to the block's parameter `n`. Upon each iteration of the inner-block, the sum of `n` and `1` is returned.
+
+As a result from each `map` method, along with them existing on the last line of their corresponding block, each element of the calling array will increment by `1`. Therefore, the outermost `map` will return the new array [[[2, 3], [4, 5]], [6, 7]]`.
+
+# Random Problems
+
+## 1
+
+```ruby
+[['a', 'b'], ['c', 'd'], ['e', 'f']].map do |sub_arr|
+  sub_arr.map do |letter|
+    letter.upcase
+  end
+end
+```
+The `map` method is called on the nested array object `[['a', 'b'], ['c', 'd'], ['e', 'f']]` and gets passed a `do...end` block as an argument, binding each subarray to the block's parameter `sub_arr` throughout iteration. The `map` method iterates through a collection, returning a new array that contains transformed elements from the calling collection based upon the return value of the last line in its block. Upon each iteration of the block, the `map` method is called again on the current subarray and gets passed another `do...end` block as an argument, binding each element to the block's parameter `letter` throughout iteration. Each iteration of the block transforms each element to its uppercased version. Because the inner `map` method is the last line of the outer block, the outer `map` will return the new array `[['A', 'B'], ['C', 'D'], ['E', 'F']]`.
+
+## 2
+
+```ruby
+[[1, 2], [3, 4]].map do |subarr|
+  subarr.select do |num|
+    num.even?
+  end
+end
+```
+The `map` method is called on the nested array object `[[1, 2], [3, 4]]` and gets passed a `do...end` block as an argument, binding each subarray to the block's parameter `subarr` throughout iteration. The `map` method iterates through a collection, returning a new array that contains transformed elements from the calling collection based upon the return value of the last line in its block. Upon each iteration of the block, the `select` method is called on the current subarray and gets passed another `do...end` block as an argument, binding each element to the block's parameter `num` throughout iteration. The `select` method iterates through a collection, returning a new collection that contains only the elements from the calling collection that evaluate as true based upon the return value of the last line of its block. Each iteration of the inner-block will return a boolean based upon if the current value of `num` is an even integer.
+
+Because only `2` and `4` are even, the first subarray will return `[2]` and the second `[4]` for `select`, resulting in the new array `[[2], [4]]` returning from `map`.
+
+## 3
+
+```ruby
+[['apple'], ['orange', 'plum'], ['banana', 'strawberry']].partition do |subarr|
+  subarr.any? do |str|
+    str.length < 6
+  end
+end
+```
+The `partition` method is called on the nested array object `[['apple'], ['orange', 'plum'], ['banana', 'strawberry']]` and gets passed a `do...end` block as an argument, binding each subarray to the block's parameter `subarr` throughout iteration. The `partition` method iterates through a collection, returning a nested array with truthy and falsy elements divided based upon the return value of the last line of its block. Upon each iteration of the block, the `any?` method is called on the current subarray and gets passed another `do...end` block as an arugment, binding each element to the block's parameter `str` throughout iteration. The `any?` method iterates through a collection, returning `true` if any of the elements evaluate as true based upon the return value of the last line of its block. Each iteration of the inner-block checks whether the current value of `str` is less than `6` characters long.
+
+For the first subarray, `'apple'` evaluates as `true`, so `any?` returns `true`. For the second, `'plum'` evaluates as true, so `true` is returned. For the last subarray, no string is less than 6 characters, so `false` will be returned. This results in `partition` returning the new array `[[["apple"], ["orange", "plum"]], [["banana", "strawberry"]]]`.
+
+## 4
+
+```ruby
+names = ['Bob', 'Joe', 'Steve', 'Janice', 'Susan', 'Helen']
+x = 1
+
+names.each do |name|
+  puts "#{x}. #{name}"
+  x += 1
+end
+```
+On line 1, local variable `names` is initialized and references the array object `['Bob', 'Joe', 'Steve', 'Janice', 'Susan', 'Helen']`. On line 2, local variable `x` is initialized and references the integer `1`.
+
+On line 4, the `each` method is called on `names` and gets passed a `do...end` block as an argument, binding each string element to the block's parameter `name` throughout iteration. Upon each iteration of the block, the current value of `name` and `x` are interpolated into the string `"#{x}. #{name}"`, then `x` increments by `1`. This outputs each name element in the calling array with a progressively higher number each iteration (`1. Bob`, `2. Joe` and so on).
+
+## 5
+
+What does the `each` method in the following program return after it is finished executing?
+```ruby
+x = [1, 2, 3, 4, 5]
+x.each do |a|
+  a + 1
+end
+```
+The `each` method iterates through a collection, returning the calling collection after iteration is complete. In this example, because `x` is initialized to reference the array object `[1, 2, 3, 4, 5]` and no destructive methods occur throughout the `do...end` block, `each` will simply return the same array object referenced by `x`.
+
+## 6
+
+```ruby
+x = 42
+loop do
+  puts x
+  x = 2
+  break
+end
+puts x
+```
+On line 1, local variable `x` is in initialized and references the integer `42`. On line 2, the `loop` method is invoked and gets passed a `do...end` block as an argument, creating a loop from lines 3-5. Upon each iteration of the loop, the current value of `x` is output, reassigned to `2`, then immediately breaks. Because of the `break` command, the loop will only iterate once, outputting `42` to the console. On line 7, the current value of `x`, which was reassigned to `2`, is output by invocation of the `puts` method.
+
+This example illustrates how Ruby approaches **variable scope** in regards to blocks. A block establishes its own scope that can access local variables initialized outside of it, but not the other way around. Because `x` was initialized before the block, Ruby had access to its value when invoking the `puts` method on line 7.
+
+## 7
+
+```ruby
+x = 0
+while x < 5
+  y = x * x
+  x += 1
+end
+
+puts y
+```
+On line 1, local variable `x` is initialized and references the integer object `0`. On line 2, a `while` loop is employed, creating a loop from lines 3-4 that will continue looping while the value of `x` is less than `5`. Upon each iteration of the loop, local variable `y` is first initialized and subsequently reassigned to reference the value of `x` times itself, then `x` will increment by `1`. Because the loop will terminate once the current value of `x` is `5`, the loop will iterate 4 times and thus `y` will reference `16`. This value is passed as an argument to the `puts` method invocation, outputting it to the console.
+
+
+
+
