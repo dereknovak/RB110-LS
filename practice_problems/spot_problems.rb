@@ -194,3 +194,89 @@ p common_chars(["cool","lock","cook"]) == ["c", "o"]
 p common_chars(["hello","goodbye","booya", "random"]) == ["o"]
 p common_chars(["aabbaaaa","ccdddddd","eeffee", "ggrrrrr", "yyyzzz"]) == []
 =end
+
+___________________
+
+Organize these
+
+# str = 'derek'
+
+# substrings = []
+# max_range = str.length
+
+# str.length.times do |idx|
+#   1.upto(max_range) do |range|
+#     substrings << str[idx, range]
+#   end
+
+#   max_range -= 1
+# end
+
+# p substrings
+
+# score = ('a'..'z').to_a.zip((1..26).to_a).to_h
+# score.each { |k, v| score[k] = v**2 }
+# p score
+
+# Study Guide Topics:
+# String and Array operations: indexing, range indexing (slicing), negative indexes, assigning elements
+# Hash operations: indexing, string and symbol keys
+# String methods: chars, concat, count, downcase, downcase!, freeze, include?, replace, reverse, reverse!, size, slice, slice!, split, strip, strip!, upcase, upcase!
+# Array methods: all?, any?, each, each_with_index, each_with_object, fetch, first, include?, join, last, map, map!, partition, pop, push, reverse, reverse!, select, select!, shift, slice, slice!, sort, sort!, unshift
+# Hash methods: all?, any?, each_key, each_value, empty?, include?, key, key?, keys, map, select, select!, value?, values
+# Integer methods: times
+# iteration, break and next
+# selection and transformation
+# nested data structures and nested iteration
+# shallow copy and deep copy
+# method chaining
+
+# p ({ a: "ant", b: "bear", c: "cat" }.each_with_object([]) do |pair, array|
+#   array << pair.last
+# end)
+
+# def common_prefix(words)
+#   prefix = ''
+#   words[0].each_char.with_index do |char, idx|
+#     if words.all? { |word| word[idx] == char }
+#       prefix << char
+#     else
+#       return prefix
+#     end
+#   end
+# end
+
+# def longest_increasing_subsequence(nums)
+#   ascending_nums = []
+  
+#   nums.size.times do |starting_idx|
+#     ascending_nums << nums[starting_idx..-1]
+#   end
+
+#   ascending_nums.map! do |subarr|
+#     ordered_nums = []
+#     subarr.each_with_index do |num, idx|
+#       if idx == 0
+#         ordered_nums << num
+#       elsif num < ordered_nums.last
+#         next
+#       else
+#         ordered_nums << num
+#       end
+#     p ordered_nums
+#     gets
+
+#     end
+#     ordered_nums
+#   end
+
+#   ascending_nums.max_by(&:size)
+# end
+
+# input_sequence = [10, 22, 9, 33, 21, 50, 41, 60, 80]
+# input_sequence2 = [51, 52, 53, 10, 22, 9, 33, 21, 50, 41, 60, 80]
+# input_sequence3 = [10, 22, 51, 52, 53, 54, 55, 56, 9, 33, 21, 50, 41, 60, 80]
+
+# longest_increasing_subsequence(input_sequence) == [10, 22, 33, 50, 60, 80]
+# longest_increasing_subsequence(input_sequence2) == [10, 22, 33, 50, 60, 80]
+# longest_increasing_subsequence(input_sequence3) == [51, 52, 53, 54, 55, 56, 60, 80]
