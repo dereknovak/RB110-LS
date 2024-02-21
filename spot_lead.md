@@ -32,6 +32,21 @@ DISCLAIMER
 kebabize('camelsHaveThreeHumps') == "camels-have-three-humps"
 kebabize('camelsHave3Humps') == "camels-have-humps"
 ```
+### Mexican Wave
+
+```ruby
+=begin
+
+Create a method that turns a string into a Mexican Wave. You will be passed a string and you must return that string
+in an array where an uppercase letter is a person standing up.
+
+=end
+p wave("hello") == ["Hello", "hEllo", "heLlo", "helLo", "hellO"]
+p wave("codewars") == ["Codewars", "cOdewars", "coDewars", "codEwars", "codeWars", "codewArs", "codewaRs", "codewarS"]
+p wave("") == []
+p wave("two words") == ["Two words", "tWo words", "twO words", "two Words", "two wOrds", "two woRds", "two worDs", "two wordS"]
+p wave(" gap ") == [" Gap ", " gAp ", " gaP "] 
+```
 
 ## Medium
 
@@ -150,4 +165,15 @@ numbers.each do |num|
   puts num
   numbers.shift
 end
+```
+
+## Shallow Copy
+
+```ruby
+arr1 = ['a', 'b', 'c']
+arr2 = arr1.dup
+
+arr2.map!(&:upcase)
+arr1
+
 ```
