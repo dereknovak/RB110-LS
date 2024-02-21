@@ -142,6 +142,13 @@ end
 
 # Confusing Topics
 
+## Method Chaining
+
+```ruby
+str = 'hello'
+str.capitalize.reverse
+```
+
 ## Nested Reassignment
 ```ruby
 a = [1, 3]
