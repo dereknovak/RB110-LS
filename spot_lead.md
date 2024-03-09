@@ -14,7 +14,7 @@ Introductions
 
 DISCLAIMER
 - I am not a TA, so I can only speak from my own experience preparing/taking the exams
-- I cannot disclose specific assessments questions
+- I cannot disclose specific assessment questions
 
 
 =end
@@ -32,20 +32,21 @@ DISCLAIMER
 kebabize('camelsHaveThreeHumps') == "camels-have-three-humps"
 kebabize('camelsHave3Humps') == "camels-have-humps"
 ```
-### Mexican Wave
+
+### Drop Evens
 
 ```ruby
 =begin
 
-Create a method that turns a string into a Mexican Wave. You will be passed a string and you must return that string
-in an array where an uppercase letter is a person standing up.
+Write a method that takes an array of integers and returns a new array 
+with all of the first even integers dropped off. If all of the integers are even, then an empty array should be returned.
 
 =end
-p wave("hello") == ["Hello", "hEllo", "heLlo", "helLo", "hellO"]
-p wave("codewars") == ["Codewars", "cOdewars", "coDewars", "codEwars", "codeWars", "codewArs", "codewaRs", "codewarS"]
-p wave("") == []
-p wave("two words") == ["Two words", "tWo words", "twO words", "two Words", "two wOrds", "two woRds", "two worDs", "two wordS"]
-p wave(" gap ") == [" Gap ", " gAp ", " gaP "] 
+
+p drop_evens([2, 4, 5, 7]) == [5, 7]
+p drop_evens([1, 3, 5, 7]) == [1, 3, 5, 7]
+p drop_evens([2, 4, 5, 6]) == [5, 6]
+p drop_evens([2, 4, 6, 8]) == []
 ```
 
 ## Medium
@@ -106,6 +107,85 @@ p mult_string('123abc') == 'aaabbbccc'
 p mult_string('2g4ab13t0gh') == 'ggaaaabbbbttt'
 p mult_string('1a5b20hi3cw') == 'abbbbbcccwww'
 ```
+
+### Common Prefix
+
+```ruby
+# Given an array of strings, find the common prefix between them. If none are
+# present, `nil` should be returned.
+
+common_prefix(['prefix', 'presume', 'pretense']) == 'pre'
+common_prefix(['flower', 'floatation', 'flute']) == 'fl'
+common_prefix(['shower', 'chower', 'thower']) == nil
+common_prefix(['ruby', 'javascript', 'python']) == nil
+```
+
+Solution
+```ruby
+def common_prefix(arr)
+  test_str = arr[0]
+  prefix = ''
+
+  test_str.each_char.with_index do |char, idx|
+    if arr.all? { |str| char == str[idx] }
+      prefix << char
+    else
+      return (prefix.empty? ? nil : prefix)
+    end
+  end
+end
+```
+
+## Advanced
+
+### Increasing Integers
+
+```ruby
+# Write a method that determines the longest sequence of increasing integers
+# from a given array.
+
+input_sequence = [10, 22, 9, 33, 21, 50, 41, 60, 80]
+input_sequence2 = [51, 52, 53, 10, 22, 9, 33, 21, 50, 41, 60, 80]
+input_sequence3 = [10, 22, 51, 52, 53, 54, 55, 56, 9, 33, 21, 50, 41, 60, 80]
+
+longest_increasing_subsequence(input_sequence) == [10, 22, 33, 50, 60, 80]
+longest_increasing_subsequence(input_sequence2) == [10, 22, 33, 50, 60, 80]
+longest_increasing_subsequence(input_sequence3) == [10, 22, 51, 52, 53, 54, 55, 56, 60, 80]
+```
+
+Solution
+
+```ruby
+def find_subarrays(arr)
+  subarrays = []
+
+  arr.size.times do |idx1|
+    idx1.upto(arr.size - 1) do |idx2|
+      subarrays << arr[idx1..idx2]
+    end
+  end
+
+  subarrays
+end
+
+def convert_to_increasing(arr)
+  increasing_arr = [arr[0]]
+
+  1.upto(arr.size - 1) do |idx|
+    increasing_arr << arr[idx] if arr[idx] > increasing_arr.last
+  end
+
+  increasing_arr
+end
+
+def longest_increasing_subsequence(arr)
+  subarrays = find_subarrays(arr)
+  subarrays.map! { |subarr| convert_to_increasing(subarr) }
+  subarrays.max_by(&:size)
+end
+```
+
+## 
 
 # Iteration
 
