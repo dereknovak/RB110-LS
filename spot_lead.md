@@ -353,8 +353,6 @@ def longest_increasing_subsequence(arr)
 end
 ```
 
-## 
-
 # Iteration
 
 ```ruby
@@ -362,6 +360,14 @@ end
   num > 5
   'hi'
 end
+```
+
+```ruby
+result = [1, 2, 3].map do |num|
+           num.odd?
+         end
+
+result
 ```
 
 # Nested Iteration
@@ -377,11 +383,13 @@ end
 ```ruby
 nums = [[2, 4, 6], [1, 2, 7], [1, 3, 5]]
 
-nums.partition do |set|
- set.any? do |num|
-   num.odd?
- end
-end
+result = nums.partition do |set|
+           set.any? do |num|
+             num.odd?
+           end
+         end
+
+result
 ```
 
 ```ruby
@@ -464,10 +472,12 @@ b
 ```ruby
 numbers = [1, 2, 3, 4, 5]
 
-numbers.each do |num|
-  puts num
-  numbers.shift
-end
+result = numbers.each do |num|
+           puts num
+           numbers.shift
+         end
+
+result
 ```
 
 ## Shallow Copy
