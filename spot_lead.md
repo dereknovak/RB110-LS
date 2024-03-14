@@ -12,11 +12,25 @@ Introductions
 - Where are you in the course?
 - What would you like to cover today?
 
+Study Guide
+- In general, you should be familiar with Ruby syntax. There will not be any syntax in the assessment that - you will not have seen previously in the course materials or exercises.
+
+- For the topics shown below, you should be able to provide clear explanations, using code snippets as - examples, and be able to identify these concepts within code snippets.
+
+- Different types of collections
+- Nested collections
+- Referencing specific elements in a collection
+- Looping and iterating over collections, including nested collections
+- Selection from collections
+- Transformation of collections
+- Sorting collections
+- Passing blocks to iterative methods
+- Shallow copy vs. deep copy
+- Method chaining
+
 DISCLAIMER
 - I am not a TA, so I can only speak from my own experience preparing/taking the exams
 - I cannot disclose specific assessment questions
-
-
 =end
 ```
 
@@ -443,7 +457,7 @@ puts "#{string1} #{string2} #{string3} #{string4}"
 ## Destructive iterative methods
 
 ```ruby
-# Without adding any additional code, change both instances of `method` to the appropriate method call so that the last line returns the correct value.
+# Without adding any additional code, change both instances of `method` to the appropriate method calls so that the last line returns the correct value. The methods may or may not be the same.
 
 letters = %w(a t s e v i r o b w u)
 vowels = 'aeiou'
