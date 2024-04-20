@@ -385,6 +385,12 @@ result = [1, 2, 3].map do |num|
 result
 ```
 
+```ruby
+{ a: "ant", b: "bear", c: "cat" }.each_with_object([]) do |pair, array|
+  array << pair.last
+end)
+```
+
 # Nested Iteration
 
 ```ruby
