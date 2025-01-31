@@ -242,7 +242,11 @@ p mult_string('3abc') == 'aaabbbccc'
 p mult_string('123abc') == 'aaabbbccc'
 p mult_string('2g4ab13t0gh') == 'ggaaaabbbbttt'
 p mult_string('1a5b20hi3cw') == 'abbbbbcccwww'
+
+multString('3ab1c') === 'aaabbbc'
 ```
+
+p mult_string('1a2b3c') == 'abbccc'
 
 Solution
 
@@ -388,7 +392,7 @@ result
 ```ruby
 { a: "ant", b: "bear", c: "cat" }.each_with_object([]) do |pair, array|
   array << pair.last
-end)
+end
 ```
 
 # Nested Iteration
